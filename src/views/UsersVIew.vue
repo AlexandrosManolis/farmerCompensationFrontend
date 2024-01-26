@@ -26,14 +26,14 @@ const requestedRoleName = 'ROLE INSPECTOR';
 
 <template xmlns:sec="http://www.w3.org/1999/xhtml">
 
-    <div class="container">
-      <div class="users-card">
+  <div class="container">
+    <div class="users-card">
+      <div class="row justify-content-center">
         <div class="col-md-8">
-    <div class="mb-4">
-      <h1 class="fs-3 text-center">Users</h1>
-    </div>
-    <div>
-      <table class="table-responsive">
+          <div class="mb-4">
+            <h1 class="fs-3 text-center">Users</h1>
+          </div>
+          <div class="table-responsive">
         <table class="table">
         <thead>
         <tr>
@@ -69,6 +69,12 @@ const requestedRoleName = 'ROLE INSPECTOR';
               <RouterLink :to="{name: 'user-declarations', params: { id: user.id }}" class="btn btn-primary" >Declarations</RouterLink>
             </td>
 
+            <td v-if="loggedInRoles.includes('ROLE_ADMIN') && (user.roles.some(role => role.name === 'ROLE_INSPECTOR'))">
+
+              <RouterLink :to="{name: 'delete-role', params: { userId: user.id, roleId: user.roles.find(role => role.name === 'ROLE_INSPECTOR')?.id}}" class="btn btn-danger" >Delete role {{user.roles.name}}</RouterLink>
+
+            </td>
+
           </tr>
         </template>
         <template v-else>
@@ -99,31 +105,49 @@ const requestedRoleName = 'ROLE INSPECTOR';
         </template>
 
         </tbody></table>
-      </table>
     </div>
           <div class="button-container mt-3">
             <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
               <RouterLink :to="{ name: 'user-requests'}" class="btn btn-primary ml-2">User Requests</RouterLink>
             </td>
           </div>
-        </div></div></div>
+        </div></div></div></div>
 </template>
+
 
 <style scoped>
 .container {
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-}
+  min-height: 100vh;
 
+}
 .users-card {
-  width: 90vw;
-  max-width: 800px;
+  width: 90vw; /* Dynamic width based on viewport width */
+  max-width: 900px;
   padding: 20px;
   border: 1px solid #dee2e6;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  table-layout: auto;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.btn {
+  cursor: pointer;
 }
 
 .loading-spinner {
@@ -136,11 +160,6 @@ const requestedRoleName = 'ROLE INSPECTOR';
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-}
-
-.btn-primary,
-.btn-success {
-  width: 100%;
 }
 
 @media (min-width: 768px) {

@@ -45,6 +45,7 @@ export const useApplicationStore = defineStore('application', () => {
       username: '',
       roles: []
     },
+    amount: ''
   });
 
 

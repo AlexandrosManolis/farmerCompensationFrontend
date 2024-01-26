@@ -17,6 +17,11 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue')
     },
     {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/RegisterView.vue')
+    },
+    {
       path: '/logout',
       name: 'logout',
       component: () => import('../views/LogoutView.vue')
@@ -70,6 +75,12 @@ const router = createRouter({
       meta: {requiresAuth: true}
     },
     {
+      path: '/users/:userId/deleteRole/:roleId',
+      name: 'delete-role',
+      component: () => import('../views/DeleteRoleView.vue'),
+      meta: {requiresAuth: true, isAdmin: true}
+    },
+    {
       path: '/users/:userId/checkOnSite/:declarationId',
       name: 'checkOnSite-report',
       component: () => import('../views/CheckOnSiteReportView.vue'),
@@ -79,6 +90,30 @@ const router = createRouter({
       path: '/users/:userId/rejectReport/:declarationId',
       name: 'reject-report',
       component: () => import('../views/RejectReportView.vue'),
+      meta: {requiresAuth: true}
+    },
+    {
+      path: '/users/:userId/acceptReport/:declarationId',
+      name: 'accept-report',
+      component: () => import('../views/AcceptReportView.vue'),
+      meta: {requiresAuth: true}
+    },
+    {
+      path: '/users/:userId/delete/:declarationId',
+      name: 'delete-declaration',
+      component: () => import('../views/DeleteDeclarationView.vue'),
+      meta: {requiresAuth: true}
+    },
+    {
+      path: '/admin/users/:userId/rejectUserRequest/:requestId',
+      name: 'reject-request',
+      component: () => import('../views/RejectUserRequestView.vue'),
+      meta: {requiresAuth: true}
+    },
+    {
+      path: '/admin/users/:userId/approveUserRequest/:requestId',
+      name: 'approve-request',
+      component: () => import('../views/ApproveUserRequestView.vue'),
       meta: {requiresAuth: true}
     }
   ]

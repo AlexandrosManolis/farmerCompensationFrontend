@@ -19,7 +19,7 @@ const userIdRef = ref(null);
 const onSubmit = () => {
   userIdRef.value = route.params.id;
   performRequest();
-  window.location.href = '/'+userIdRef.value+'/user-declatations';
+  window.location.href = '/users/'+userIdRef.value+'/user-declarations';
 };
 
 const urlRef = computed(() => {

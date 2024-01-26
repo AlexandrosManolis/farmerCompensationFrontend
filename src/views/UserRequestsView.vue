@@ -42,6 +42,9 @@ onMounted(() => {
             <td>{{ request.id }}</td>
             <td>{{ request.status }}</td>
             <td>{{request.user.username}}</td>
+            <td><RouterLink :to="{name: 'reject-request', params: { userId: request.user.id, requestId: request.id }}" class="btn btn-danger">Reject!</RouterLink></td>
+              <td><RouterLink :to="{name: 'approve-request', params: { userId: request.user.id, requestId: request.id }}" class="btn btn-success">Approve!</RouterLink></td>
+
           </tr>
         </template>
         <template v-else-if="data.length === 0">
@@ -53,6 +56,9 @@ onMounted(() => {
           <tr>
             <td>{{ data.id }}</td>
             <td>{{ data.status }}</td>
+            <td>{{data.user.username}}</td>
+            <RouterLink :to="{name: 'reject-request', params: { userId: data.user.id, requestId: data.id }}" class="btn btn-danger">Reject!</RouterLink>
+            <RouterLink :to="{name: 'approve-request', params: { userId: data.user.id, requestId: data.id }}" class="btn btn-success">Approve!</RouterLink>
 
           </tr>
         </template>

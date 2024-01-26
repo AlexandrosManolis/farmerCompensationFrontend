@@ -1,9 +1,10 @@
 <script setup>
 
-import {computed, onMounted, ref} from 'vue';
+import {computed, onMounted, reactive, ref} from 'vue';
 import { useRemoteData } from '@/composables/useRemoteData.js';
 import {useRoute, useRouter} from "vue-router";
 import {useApplicationStore} from "@/stores/application.js";
+import {sharedState} from "@/stores/sharedState.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -31,6 +32,23 @@ const loggedInRoles = computed(() => applicationStore.isAuthenticated ? applicat
 const goback = () => {
   router.push('/users');
 };
+
+const isAmountEmpty = ref(true);
+
+function EnableDisable(event) {
+  // Assuming event is always defined (from @keyup)
+  const amount = event.target.value.trim();
+  isAmountEmpty.value = amount === "";
+  sharedState.amount = amount;
+}
+
+const navigateToAcceptReport = (declaration) => {
+  router.push({
+    name: 'accept-report',
+    params: { userId: declaration.userId, declarationId: declaration.id }
+  });
+};
+
 </script>
 
 <template>
@@ -61,10 +79,13 @@ const goback = () => {
 
             <template v-if="Array.isArray(data)  && data.length > 0">
               <tr v-for="declaration in data" :key="declaration.id">
+
                 <td>{{ declaration.id }}</td>
                 <td>{{ declaration.description }}</td>
                 <td>{{ declaration.submissionDate}}</td>
                 <td class="d-flex align-items-center"><button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.status" disabled></button></td>
+
+                <td class="d-flex align-items-center" v-if="declaration.status === 'Accepted'"><span>Total amount:</span><button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.amount" disabled></button></td>
 
                 <td>
                   <RouterLink :to="{name: 'declaration-details', params: { userId: declaration.userId, declarationId: declaration.id}}" class="btn btn-primary">Report</RouterLink>
@@ -75,15 +96,27 @@ const goback = () => {
                 </td>
 
                 <td v-if="(loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted'))">
-                  <RouterLink :to="{name: 'reject-report', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-info narrow-button btn-sm" role="button"><span >Reject</span></RouterLink>
+
+                  <RouterLink :to="{name: 'reject-report', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Reject</span></RouterLink>
+                  <div class="spacer"></div>
+
+
+                    <label>Refund Amount:</label>
+                    <input type="text" id="amount" name="amount" @input="EnableDisable" />
+                    <button @click.prevent="()=> navigateToAcceptReport(declaration)" id="acceptButton" type="submit" value="Submit" role="button" class="btn btn-success narrow-button btn-sm" :disabled="isAmountEmpty"><span >Accept</span></button>
+
                 </td>
 
-<!--                  <label th:unless="${declaration.status} == 'Rejected' or ${declaration.status} == 'Accepted'">Refund Amount:</label>-->
-<!--                  <input type="text" id="amount" name="amount" onkeyup="EnableDisable(this)" th:unless="${declaration.status} == 'Rejected' or ${declaration.status} == 'Accepted' "/>-->
-<!--                  <button id="acceptButton" type="submit" value="Submit" role="button" class="btn btn-info" th:unless="${declaration.status} == 'Rejected' or ${declaration.status} == 'Accepted'" onclick="submitForm()" disabled="disabled">Accept</button>-->
-<!--                </form>-->
+                <td v-if="(loggedInRoles.includes('ROLE_FARMER') || loggedInRoles.includes('ROLE_INSPECTOR')) && loggedInUserId === declaration.userId ">
 
-              </tr>
+                  <RouterLink :to="{name: 'delete-declaration', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Delete Declaration!</span></RouterLink>
+                </td>
+                <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
+
+                  <RouterLink :to="{name: 'delete-declaration', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Delete Declaration!</span></RouterLink>
+                </td>
+
+               </tr>
             </template>
             <template v-else>
                 <tr>
@@ -116,7 +149,7 @@ const goback = () => {
 
 }
 .users-card {
-  width: 90vw; /* Dynamic width based on viewport width */
+  width: 90vw;
   max-width: 900px;
   padding: 20px;
   border: 1px solid #dee2e6;
@@ -148,26 +181,4 @@ const goback = () => {
   border-collapse: collapse;
   margin-bottom: 20px;
 }
-
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.btn {
-  cursor: pointer;
-}
-
-.narrow-button {
-  display: inline-block;
-  width: 80px;
-  padding: 8px 10px;
-}
-
-.btn-info {
-  background-color: #17a2b8;
-  color: #fff;
-}
-
 </style>
