@@ -89,8 +89,6 @@ onBeforeMount(() => {
         <button @click="onFormSubmit" type="submit" class="btn btn-primary">Login</button>
         <span class="fst-italic" v-if="credentials.username">as {{ credentials.username }}</span>
 
-        <span>No account?</span>
-        <RouterLink :to="{name: 'register'}" class="btn btn-link">Sign up</RouterLink>
       </form>
         </div>
     </div>

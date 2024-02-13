@@ -71,6 +71,7 @@ const goback = () => {
       </tbody>
       <div>
         <button type="button" @click="goback">Go Back</button>
+
       </div>
     </table>
   </div>

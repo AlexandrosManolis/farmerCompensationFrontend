@@ -19,7 +19,8 @@ const router = createRouter({
     {
       path: '/register',
       name: 'register',
-      component: () => import('../views/RegisterView.vue')
+      component: () => import('../views/RegisterView.vue'),
+      meta: {requiresAuth: true}
     },
     {
       path: '/logout',
@@ -54,6 +55,12 @@ const router = createRouter({
       path: '/:userId/declaration-details/:declarationId',
       name: 'declaration-details',
       component: () => import('../views/DeclarationDetailsView.vue'),
+      meta:{requiresAuth: true}
+    },
+    {
+      path: '/:userId/edit-declaration/:declarationId',
+      name: 'edit-declaration',
+      component: () => import('../views/EditDeclaration.vue'),
       meta:{requiresAuth: true}
     },
     {

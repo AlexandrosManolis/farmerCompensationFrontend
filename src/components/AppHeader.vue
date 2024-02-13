@@ -36,8 +36,8 @@ const roles = computed(() => applicationStore.isAuthenticated ? applicationStore
               <b-dropdown-item v-for="role in roles" :key="role" disabled>{{ role }}</b-dropdown-item>
               <b-dropdown-divider></b-dropdown-divider>
               <router-link :to="{ name: 'logout' }" class="nav-link text-white">Logout</router-link>
-
             </b-nav-item-dropdown>
+
           </li>
 
           <li class="nav-item" v-if="!applicationStore.isAuthenticated">

@@ -1,51 +1,71 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import {ref, computed, onMounted} from "vue";
 import { useRemoteData } from "@/composables/useRemoteData.js";
-import { useRoute } from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
-// Define refs
 const authRef = ref(true);
+//
+// const formDataRef = ref({
+//   "username": "",
+//   "email": "",
+//   "address": "",
+//   "afm": "",
+//   "full_name": "",
+//   "identity_id": ""
+// });
+  const router = useRouter();
+  const route = useRoute();
+  const userIdRef = ref(null);
 
-// Use useRoute to get the route parameter
-const route = useRoute();
+userIdRef.value = route.params.id;
 
-const userIdRef = ref(route.params.id);
-const getUrl = 'http://localhost:9090/api/users/edit/'+ userIdRef.value + '/new';
-const postUrl = 'http://localhost:9090/api/users/edit/'+ userIdRef.value + '/new';
+  const urlRef = computed(() => {
+    return 'http://localhost:9090/api/users/edit/'+ userIdRef.value;
+  });
 
-// Fetch existing data on component mount
-const { data, loading: getDataLoading, performRequest } = useRemoteData(getUrl, authRef, "GET");
+  const { data, performRequest, loading } = useRemoteData(urlRef, authRef);
 
-// Function to handle form submission
-const onSubmit = async () => {
-  console.log("User data updated successfully!");
+const onSubmit =async () => {
+  try {
 
-  // Assuming 'data' contains the user information
-  const requestData = {
-    username: data.username,
-    email: data.email,
-    address: data.address,
-    afm: data.afm,
-    full_name: data.full_name,
-    identity_id: data.identity_id
+    const formValues = {
+      username: data.username,
+      email: data.email,
+      address: data.address,
+      afm: document.getElementById('afm').value,
+      full_name: document.getElementById('full_name').value,
+      identity_id: document.getElementById('identity_id').value,
+    };
+
+    // Assuming you have an API endpoint for handling the form data
+    const response = await fetch(urlRef.value, {
+      method: "POST",
+      body: JSON.stringify(formValues),
+    });
+
+    // Handle the response, e.g., show a success message
+    console.log('Form submitted successfully', response);
+
+    data.value = { ...data.value, ...formValues };
+
+  } catch (error) {
+    // Handle errors, e.g., show an error message
+    console.error('Error submitting form', error);
+  }
+    performRequest();
+    //window.location.href = '/users';
   };
 
-  const { performRequest, error: postError } = useRemoteData(postUrl, authRef, "POST");
-
-  if (postError) {
-    console.error("Error updating user data:", postError);
-    return; // Don't proceed with the update if there was an error
-  }
-
-  await performRequest(requestData);
-  console.log("User data updated successfully!");
-
-};
 
 onMounted(() => {
   userIdRef.value = route.params.id;
-  performRequest();
+  performRequest(userIdRef.value);
 });
+
+const goback = () => {
+  router.push('/user-details/'+ userIdRef.value);
+};
+
 </script>
 
 
@@ -54,7 +74,7 @@ onMounted(() => {
     <form @submit.prevent="onSubmit">
 
       <div v-if="data">
-
+        <div><h1>Edit User {{data.id}}</h1></div>
         <div class="form-group">
           <label for="username">Username</label>
           <input type="text" id="username" class="form-control" v-model="data.username">
@@ -74,9 +94,12 @@ onMounted(() => {
           <label for="identity_id">Identity ID</label>
           <input type="text" id="identity_id" class="form-control" v-model="data.identity_id">
         </div>
-
-        <button type="submit" class="btn btn-primary" :disabled="loading"> {{ getDataLoading ? 'Loading...' : 'Submit Changes' }}</button>
+        <div style="display: flex; justify-content: space-between;">
+          <button type="button" class="btn-dark" @click="goback">Cancel Edit</button>
+          <button type="submit" class="btn btn-primary" :disabled="loading"> {{ getDataLoading ? 'Loading...' : 'Submit Changes' }}</button>
         </div>
+
+      </div>
       <div v-if="loading">
         Loading...
       </div>

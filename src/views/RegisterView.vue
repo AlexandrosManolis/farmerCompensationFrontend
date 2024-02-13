@@ -1,31 +1,90 @@
 <script setup>
-import {computed, ref} from 'vue';
-import {useRemoteData} from "@/composables/useRemoteData.js";
+import { ref } from 'vue';
+import { useRemoteData } from "@/composables/useRemoteData.js";
 import router from "@/router/index.js";
 
 const formDataRef = ref({
-  "email":"",
-  "username":"",
-  "password":"",
-  "full_name":"",
-  "address":"",
-  "afm":"",
-  "identity_id":"",
+  "email": "",
+  "username": "",
+  "password": "",
+  "full_name": "",
+  "address": "",
+  "afm": "",
+  "identity_id": "",
 });
+const { performRequest } = useRemoteData('http://localhost:9090/api/auth/signup', true, 'POST', formDataRef);
+const errorRef = ref(null);
+const successRef = ref(null);
 
-const onSubmit = () => {
-  performRequest();
-  router.push('/login');
+const onSubmit = async () => {
+  if (validateFormData()) {
+    await performRequest();
+    successRef.value = 'User registered successfully!';
+    router.push('/login');
+  }
 };
 
-const urlRef = computed(() => {
-  return 'http://localhost:9090/api/auth/signup';
-});
+const validateFormData = () => {
+  let isValid = true;
 
-const methodRef = ref("POST");
+  if (!formDataRef.value.email || !formDataRef.value.username || !formDataRef.value.password || !formDataRef.value.full_name || !formDataRef.value.address || !formDataRef.value.afm || !formDataRef.value.identity_id) {
+    errorRef.value = "Please fill in all fields.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 3000);
+    return false;
+  }
 
-const { data, performRequest } = useRemoteData(urlRef, methodRef, formDataRef);
+  if (!/^\S+@\S+\.\S+$/.test(formDataRef.value.email)) {
+    errorRef.value = "Email address should follow the format 'something@something.com'";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 3000);
+    return false;
+  }
 
+  if (!/^\S+\s+\S+$/.test(formDataRef.value.full_name)) {
+    errorRef.value = "Please enter your full name in the format 'First name last name'.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 3000);
+    return false;
+  }
+
+  if (!/^\S+\s+\d+$/.test(formDataRef.value.address)) {
+    errorRef.value = "Please enter your address in the format 'Street number'.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 3000);
+    return false;
+  }
+
+  if (!/^\d{9}$/.test(formDataRef.value.afm)) {
+    errorRef.value = "Afm should contain exactly 9 digits.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 3000);
+    return false;
+  }
+
+  if (!/^[A-Z]{2}\d{6}$/.test(formDataRef.value.identity_id)) {
+    errorRef.value = "Identity ID should follow the format 'AA123456'.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 3000);
+    return false;
+  }
+
+  if (!/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(formDataRef.value.password)) {
+    errorRef.value = "Password should contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 3000);
+    return false;
+  }
+
+  return isValid;
+}
 </script>
 
 <template>
@@ -33,44 +92,51 @@ const { data, performRequest } = useRemoteData(urlRef, methodRef, formDataRef);
     <div class="signup-card">
       <div class="col-md-8">
         <div class="fs-3 text-center mb-4">
-    <h1>Create new User!</h1>
-  </div>
-  <div>
-    <pre>{{ data }}</pre>
-  </div>
+          <h1>Create new User!</h1>
+        </div>
 
-    <div class="mb-2">
-      <label for="firstName">Email</label>
-      <input class="form-control" id="email" v-model="formDataRef.email" type="email" />
+        <div class="mb-2">
+          <label for="email">Email</label>
+          <input class="form-control" id="email" v-model="formDataRef.email" type="email" required />
+        </div>
+        <div class="mb-2">
+          <label for="username">Username</label>
+          <input class="form-control" id="username" v-model="formDataRef.username" type="text" required />
+          <div v-if="errorRef && errorRef.includes('Username')" class="text-danger mb-2">{{ errorRef }}</div>
+        </div>
+        <div class="mb-2">
+          <label for="password">Password</label>
+          <input class="form-control" id="password" v-model="formDataRef.password" type="password" required />
+        </div>
+        <div class="mb-2">
+          <label for="full_name">Full_name</label>
+          <input class="form-control" id="full_name" v-model="formDataRef.full_name" type="text" required />
+        </div>
+        <div class="mb-2">
+          <label for="address">Address</label>
+          <input class="form-control" id="address" v-model="formDataRef.address" type="text" required />
+        </div>
+        <div class="mb-2">
+          <label for="afm">Afm</label>
+          <input class="form-control" id="afm" v-model="formDataRef.afm" type="text" required />
+        </div>
+        <div class="mb-2">
+          <label for="identity_id">Identity_id</label>
+          <input class="form-control" id="identity_id" v-model="formDataRef.identity_id" type="text" required />
+        </div>
+        <div>
+          <div v-if="errorRef && !errorRef.includes('Email') && !errorRef.includes('Username')" class="text-danger mb-2">
+            {{ errorRef }}
+          </div>
+          <div v-if="errorRef && errorRef.includes('Email')" class="text-danger mb-2">{{ errorRef }}</div>
+          <div v-if="successRef" class="text-success mb-2">
+            {{ successRef }}
+          </div>
+          <button class="btn btn-primary" @click="onSubmit" type="button">Create new User</button>
+        </div>
+      </div>
     </div>
-    <div class="mb-2">
-      <label for="username">Username</label>
-      <input class="form-control" id="username" v-model="formDataRef.username" type="text" />
-    </div>
-    <div class="mb-2">
-      <label for="password">Password</label>
-      <input class="form-control" id="password" v-model="formDataRef.password" type="password" />
-    </div>
-    <div class="mb-2">
-      <label for="full_name">Full_name</label>
-      <input class="form-control" id="full_name" v-model="formDataRef.full_name" type="text" />
-    </div>
-    <div class="mb-2">
-      <label for="address">Address</label>
-      <input class="form-control" id="address" v-model="formDataRef.address" type="text" />
-    </div>
-    <div class="mb-2">
-      <label for="afm">Afm</label>
-      <input class="form-control" id="afm" v-model="formDataRef.afm" type="text" />
-    </div>
-    <div class="mb-2">
-      <label for="identity_id">Identity_id</label>
-      <input class="form-control" id="identity_id" v-model="formDataRef.identity_id" type="text" />
-    </div>
-    <div class="">
-      <button class="btn btn-primary" @click="onSubmit" type="button">Create new User</button>
-    </div>
-      </div></div></div>
+  </div>
 </template>
 
 <style scoped>

@@ -110,6 +110,9 @@ const requestedRoleName = 'ROLE INSPECTOR';
             <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
               <RouterLink :to="{ name: 'user-requests'}" class="btn btn-primary ml-2">User Requests</RouterLink>
             </td>
+            <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
+              <RouterLink :to="{ name: 'register'}" class="btn btn-primary ml-2">Create new user!</RouterLink>
+            </td>
           </div>
         </div></div></div></div>
 </template>

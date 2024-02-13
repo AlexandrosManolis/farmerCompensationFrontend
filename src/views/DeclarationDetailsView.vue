@@ -23,6 +23,10 @@ onMounted(() => {
 
   performRequest();
 });
+
+const goback = () => {
+  router.push('/users/'+ userIdRef.value+ '/user-declarations');
+};
 </script>
 
 <template>
@@ -82,9 +86,14 @@ onMounted(() => {
         <th>Amount</th>
         <td>{{ data.amount }}</td>
       </tr>
+
       </tbody>
+      <button type="button" @click="goback" >Go Back!</button>
+      <RouterLink :to="{name: 'edit-declaration', params: {userId: userIdRef.value, declarationId: userIdRef.value}}">Edit Declaration</RouterLink>
+
     </table>
   </div>
+
 </template>
 
 <style scoped>
