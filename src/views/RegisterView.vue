@@ -10,7 +10,7 @@ const formDataRef = ref({
   "full_name": "",
   "address": "",
   "afm": "",
-  "identity_id": "",
+  "identity": "",
 });
 const errorRef = ref(null);
 const successRef = ref(null);
@@ -78,7 +78,7 @@ const validateFormData = () => {
     return false;
   }
 
-  if (!/^[A-Z]{2}\d{6}$/.test(formDataRef.value.identity_id)) {
+  if (!/^[A-Z]{2}\d{6}$/.test(formDataRef.value.identity)) {
     errorRef.value = "Identity ID should follow the format 'AA123456'.";
     setTimeout(() => {
       errorRef.value = null;
@@ -132,8 +132,8 @@ const validateFormData = () => {
           <input class="form-control" id="afm" v-model="formDataRef.afm" type="text" required />
         </div>
         <div class="mb-2">
-          <label for="identity_id">Identity_id</label>
-          <input class="form-control" id="identity_id" v-model="formDataRef.identity_id" type="text" required />
+          <label for="identity">Identity</label>
+          <input class="form-control" id="identity" v-model="formDataRef.identity" type="text" required />
         </div>
         <div>
           <div v-if="errorRef && !errorRef.includes('Email') && !errorRef.includes('Username')" class="text-danger mb-2">

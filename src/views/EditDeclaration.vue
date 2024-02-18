@@ -3,62 +3,55 @@ import {ref, computed, onMounted} from "vue";
 import { useRemoteData } from "@/composables/useRemoteData.js";
 import {useRoute, useRouter} from "vue-router";
 
-const authRef = ref(true);
+const formValues = ref({
+  fieldAddress: "",
+  description: "",
+  plant_production: "",
+  annualStartProduction: "",
+  fieldSize: "",
+  damageDate: "",
+});
 
 
 const router = useRouter();
 const route = useRoute();
 const userIdRef = ref(null);
+const declarationIdRef = ref(null);
 
-userIdRef.value = route.params.id;
+userIdRef.value = route.params.userId;
 declarationIdRef.value = route.params.declarationId;
 
-
-const urlRef = computed(() => {
-  return 'http://localhost:9090/api/declaration/'+ userIdRef.value+'/'+declarationIdRef.value;
-});
-
-const { data, performRequest, loading } = useRemoteData(urlRef, authRef);
-
-const onSubmit =async () => {
+const onSubmit = async () => {
   try {
-
-    const formValues = {
-      username: data.username,
-      email: data.email,
-      address: data.address,
-      afm: document.getElementById('afm').value,
-      full_name: document.getElementById('full_name').value,
-      identity_id: document.getElementById('identity_id').value,
-    };
-
-    // Assuming you have an API endpoint for handling the form data
-    const response = await fetch(urlRef.value, {
-      method: "POST",
-      body: JSON.stringify(formValues),
-    });
-
-    // Handle the response, e.g., show a success message
-    console.log('Form submitted successfully', response);
-
-    data.value = { ...data.value, ...formValues };
-
+    await performPostRequest();
+    router.push('/' + userIdRef.value + '/declaration-details/' + declarationIdRef.value);
   } catch (error) {
-    // Handle errors, e.g., show an error message
     console.error('Error submitting form', error);
   }
-  performRequest();
-  //window.location.href = '/users';
 };
 
+const urlRef = computed(() => {
+  return 'http://localhost:9090/api/declaration/' + userIdRef.value + '/edit/' + declarationIdRef.value;
+});
+const authRefPost = ref(true);
+const methodRefPost = ref("POST");
 
-onMounted(() => {
-  userIdRef.value = route.params.id;
-  performRequest(userIdRef.value);
+const {performRequest: performPostRequest, loading} = useRemoteData(urlRef, authRefPost, methodRefPost, formValues);
+
+onMounted(async () => {
+  // Call a GET method on mount
+  methodRefGet.value = "GET"; // Change the request method to GET
+  await performGetRequest(); // Perform the GET request
 });
 
+
+const authRefGet = ref(true);
+const methodRefGet = ref("GET");
+
+const { data: getData, performRequest: performGetRequest} = useRemoteData(urlRef, authRefGet, methodRefGet);
+
 const goback = () => {
-  router.push('/user-details/'+ userIdRef.value);
+  router.push('/users/'+userIdRef.value+'/user-declarations');
 };
 
 </script>
@@ -68,38 +61,38 @@ const goback = () => {
   <div class="container">
     <form @submit.prevent="onSubmit">
 
-      <div v-if="data">
-        <div><h1> {{data.id}}</h1></div>
+      <div v-if="getData">
+
+      <div><h1> Declaration {{getData.id}}</h1></div>
         <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" class="form-control" v-model="data.username">
+          <label for="fieldAddress">Field Address: (current data -> {{getData.fieldAddress}})</label>
+          <input type="text" id="fieldAddress" class="form-control" v-model="formValues.fieldAddress">
 
-          <label for="email">Email</label>
-          <input type="text" id="email" class="form-control" v-model="data.email">
+          <label for="description">Description: (current data -> {{getData.description}})</label>
+          <input type="text" id="description" class="form-control" v-model="formValues.description">
 
-          <label for="address">Address</label>
-          <input type="text" id="address" class="form-control" v-model="data.address">
+          <label for="plant_production">Plant Production: (current data -> {{getData.plant_production}})</label>
+          <input type="text" id="plant_production" class="form-control" v-model="formValues.plant_production">
 
-          <label for="afm">AFM</label>
-          <input type="text" id="afm" class="form-control" v-model="data.afm">
+          <label for="annualStartProduction">Annual Start Production: (current data -> {{getData.annualStartProduction}})</label>
+          <input type="date" id="annualStartProduction" class="form-control" v-model="formValues.annualStartProduction">
 
-          <label for="full_name">Full Name</label>
-          <input type="text" id="full_name" class="form-control" v-model="data.full_name">
+          <label for="fieldSize">Field Size: (current data -> {{getData.fieldSize}})</label>
+          <input type="text" id="fieldSize" class="form-control" v-model.lazy="formValues.fieldSize" >
 
-          <label for="identity_id">Identity ID</label>
-          <input type="text" id="identity_id" class="form-control" v-model="data.identity_id">
+          <label for="damageDate">Damage Date: (current data -> {{getData.damageDate}})</label>
+          <input type="date" id="damageDate" class="form-control" v-model="formValues.damageDate">
         </div>
         <div style="display: flex; justify-content: space-between;">
           <button type="button" class="btn-dark" @click="goback">Cancel Edit</button>
-          <button type="submit" class="btn btn-primary" :disabled="loading"> {{ getDataLoading ? 'Loading...' : 'Submit Changes' }}</button>
+          <button type="submit" class="btn btn-primary" :disabled="loading"> {{ loading ? 'Loading...' : 'Submit Changes' }}</button>
         </div>
 
-      </div>
       <div v-if="loading">
         Loading...
       </div>
 
-    </form></div>
+      </div></form></div>
 </template>
 
 

@@ -65,7 +65,7 @@ const goback = () => {
       </tr>
       <tr>
         <th>Identity ID</th>
-        <td>{{ data.identity_id }}</td>
+        <td>{{ data.identity }}</td>
       </tr>
 
       </tbody>
