@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import {computed, ref} from 'vue';
 import { useRemoteData } from "@/composables/useRemoteData.js";
 import router from "@/router/index.js";
 
@@ -12,7 +12,6 @@ const formDataRef = ref({
   "afm": "",
   "identity_id": "",
 });
-const { performRequest } = useRemoteData('http://localhost:9090/api/auth/signup', true, 'POST', formDataRef);
 const errorRef = ref(null);
 const successRef = ref(null);
 
@@ -20,9 +19,21 @@ const onSubmit = async () => {
   if (validateFormData()) {
     await performRequest();
     successRef.value = 'User registered successfully!';
-    router.push('/login');
+    router.push('/users');
   }
 };
+
+
+const urlRef = computed(() => {
+  return 'http://localhost:9090/api/auth/signup';
+});
+
+const authRef = ref(true);
+const methodRef = ref("POST");
+
+const { performRequest } = useRemoteData(urlRef, authRef, methodRef, formDataRef);
+
+
 
 const validateFormData = () => {
   let isValid = true;
@@ -31,7 +42,7 @@ const validateFormData = () => {
     errorRef.value = "Please fill in all fields.";
     setTimeout(() => {
       errorRef.value = null;
-    }, 3000);
+    }, 6000);
     return false;
   }
 
@@ -39,7 +50,7 @@ const validateFormData = () => {
     errorRef.value = "Email address should follow the format 'something@something.com'";
     setTimeout(() => {
       errorRef.value = null;
-    }, 3000);
+    }, 6000);
     return false;
   }
 
@@ -47,7 +58,7 @@ const validateFormData = () => {
     errorRef.value = "Please enter your full name in the format 'First name last name'.";
     setTimeout(() => {
       errorRef.value = null;
-    }, 3000);
+    }, 6000);
     return false;
   }
 
@@ -55,7 +66,7 @@ const validateFormData = () => {
     errorRef.value = "Please enter your address in the format 'Street number'.";
     setTimeout(() => {
       errorRef.value = null;
-    }, 3000);
+    }, 6000);
     return false;
   }
 
@@ -63,7 +74,7 @@ const validateFormData = () => {
     errorRef.value = "Afm should contain exactly 9 digits.";
     setTimeout(() => {
       errorRef.value = null;
-    }, 3000);
+    }, 6000);
     return false;
   }
 
@@ -71,15 +82,15 @@ const validateFormData = () => {
     errorRef.value = "Identity ID should follow the format 'AA123456'.";
     setTimeout(() => {
       errorRef.value = null;
-    }, 3000);
+    }, 6000);
     return false;
   }
 
-  if (!/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(formDataRef.value.password)) {
-    errorRef.value = "Password should contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long.";
+  if (!/^.{5,}$/.test(formDataRef.value.password)) {
+    errorRef.value = "Password should contain at least 5 characters long.";
     setTimeout(() => {
       errorRef.value = null;
-    }, 3000);
+    }, 6000);
     return false;
   }
 
