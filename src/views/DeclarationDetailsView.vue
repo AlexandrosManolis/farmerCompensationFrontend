@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useRemoteData } from '@/composables/useRemoteData.js';
+import {useApplicationStore} from "@/stores/application.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -19,8 +20,14 @@ const urlRef = computed(() => {
 const authRef = ref(true);
 const { data, loading, performRequest } = useRemoteData(urlRef, authRef);
 
-onMounted(() => {
+const applicationStore = useApplicationStore();
+const loggedInRoles = computed(() => applicationStore.isAuthenticated ? applicationStore.userData.roles : []);
 
+const loggedInId = computed(() => applicationStore.isAuthenticated ? applicationStore.userData.id : null);
+
+const declarationId = declarationIdRef.value;
+const userId= userIdRef.value;
+onMounted(() => {
   performRequest();
 });
 
@@ -31,7 +38,9 @@ const goback = () => {
 
 <template>
   <div class="container">
-    <h1>Declaration Details</h1>
+    <header>
+      <div><h1>Declaration {{declarationId}} details:</h1></div>
+    </header>
     <table class="table">
 
       <thead>
@@ -89,7 +98,10 @@ const goback = () => {
 
       </tbody>
       <button type="button" @click="goback" >Go Back!</button>
-      <RouterLink :to="{name: 'edit-declaration', params: {userId: userIdRef.value, declarationId: userIdRef.value}}">Edit Declaration</RouterLink>
+      <div v-if="loggedInRoles.includes('ROLE_ADMIN') || (loggedInId.value === userId)">
+        <RouterLink :to="{name: 'edit-declaration', params: {userId: userIdRef.value, declarationId: declarationIdRef.value}}">Edit Declaration</RouterLink>
+
+      </div>
 
     </table>
   </div>

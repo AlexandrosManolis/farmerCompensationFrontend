@@ -7,18 +7,20 @@ const router = useRouter();
 const route = useRoute();
 
 const userIdRef = ref(null);
+
+const authRef = ref(true);
+
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/users/details/' + userIdRef.value;
 });
 
-const authRef = ref(true);
 const { data, loading, performRequest } = useRemoteData(urlRef, authRef);
 
+userIdRef.value = route.params.id;
 onMounted(() => {
-  userIdRef.value = route.params.id;
   performRequest();
 });
-
+const userid = userIdRef.value;
 const goback = () => {
   router.push('/users');
 };
@@ -26,6 +28,7 @@ const goback = () => {
 
 <template>
   <div class="container">
+    <div><h1>User details with ID: {{userid}}</h1></div>
     <table class="table">
       <thead>
       <tr>

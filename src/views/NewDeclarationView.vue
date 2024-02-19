@@ -15,8 +15,57 @@ const formDataRef = ref({
 
 const route = useRoute();
 const userIdRef = ref(null);
+const errorRef = ref(null);
+
 
 const onSubmit = () => {
+
+
+  if (!formDataRef.value.fieldAddress || !formDataRef.value.description || !formDataRef.value.plant_production || !formDataRef.value.annualStartProduction || !formDataRef.value.fieldSize || !formDataRef.value.damageDate) {
+    errorRef.value = "Please fill in all fields.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 6000);
+    return;
+  }
+
+  if (!isNaN(formDataRef.value.plant_production)) {
+    errorRef.value = "Plant Production should not contain any numbers.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 6000);
+    return;
+  }
+
+  const currentDate = new Date();
+  const selectedStartDate = new Date(formDataRef.value.annualStartProduction);
+
+  if (selectedStartDate > currentDate) {
+    errorRef.value = 'Please select a proper date for Annual Start Production.';
+    return;
+  }
+
+  if (isNaN(formDataRef.value.fieldSize)) {
+    errorRef.value = "Field Size should contain only numbers.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 6000);
+    return;
+  }
+
+  const selectedDamageDate = new Date(formDataRef.value.damageDate);
+
+  if (selectedDamageDate > currentDate) {
+    errorRef.value = 'Please select a proper date for Damage Date.';
+    return;
+  }
+
+  if (selectedDamageDate < selectedStartDate) {
+    errorRef.value = 'Damage Date must be greater than or equal to Annual Start Production.';
+    return;
+  }
+
+
   userIdRef.value = route.params.id;
   performRequest();
   window.location.href = '/users/'+userIdRef.value+'/user-declarations';
@@ -69,7 +118,8 @@ const { data, performRequest } = useRemoteData(urlRef, authRef, methodRef, formD
       <label for="damageDate">Damage Date</label>
       <input class="form-control" id="damageDate" v-model="formDataRef.damageDate" type="date" />
     </div>
-    <div class="">
+        <div v-if="errorRef" class="text-danger mb-2">{{ errorRef }}</div>
+        <div class="">
       <button class="btn btn-primary" @click="onSubmit" type="button">Create new Declaration</button>
     </div>
   </div></div></div>

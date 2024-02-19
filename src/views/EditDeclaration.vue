@@ -17,14 +17,60 @@ const router = useRouter();
 const route = useRoute();
 const userIdRef = ref(null);
 const declarationIdRef = ref(null);
+const errorRef = ref(null);
 
 userIdRef.value = route.params.userId;
 declarationIdRef.value = route.params.declarationId;
 
 const onSubmit = async () => {
+  if (!formValues.value.fieldAddress || !formValues.value.description || !formValues.value.plant_production || !formValues.value.annualStartProduction || !formValues.value.fieldSize || !formValues.value.damageDate) {
+    errorRef.value = "Please fill in all fields.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 6000);
+    return;
+  }
+
+  if (!isNaN(formValues.value.plant_production)) {
+    errorRef.value = "Plant Production should not contain any numbers.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 6000);
+    return;
+  }
+
+  const currentDate = new Date();
+  const selectedStartDate = new Date(formValues.value.annualStartProduction);
+
+  if (selectedStartDate > currentDate) {
+    errorRef.value = 'Please select a proper date for Annual Start Production.';
+    return;
+  }
+
+  if (isNaN(formValues.value.fieldSize)) {
+    errorRef.value = "Field Size should contain only numbers.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 6000);
+    return;
+  }
+
+  const selectedDamageDate = new Date(formValues.value.damageDate);
+
+  if (selectedDamageDate > currentDate) {
+    errorRef.value = 'Please select a proper date for Damage Date.';
+    return;
+  }
+
+  if (selectedDamageDate < selectedStartDate) {
+    errorRef.value = 'Damage Date must be greater than or equal to Annual Start Production.';
+    return;
+  }
+
+
   try {
     await performPostRequest();
-    router.push('/' + userIdRef.value + '/declaration-details/' + declarationIdRef.value);
+    window.location.href='/'+userIdRef.value+'/declaration-details/'+declarationIdRef.value;
   } catch (error) {
     console.error('Error submitting form', error);
   }
@@ -63,7 +109,7 @@ const goback = () => {
 
       <div v-if="getData">
 
-      <div><h1> Declaration {{getData.id}}</h1></div>
+      <div><h1> Edit declaration {{getData.id}}:</h1></div>
         <div class="form-group">
           <label for="fieldAddress">Field Address: (current data -> {{getData.fieldAddress}})</label>
           <input type="text" id="fieldAddress" class="form-control" v-model="formValues.fieldAddress">
@@ -83,6 +129,8 @@ const goback = () => {
           <label for="damageDate">Damage Date: (current data -> {{getData.damageDate}})</label>
           <input type="date" id="damageDate" class="form-control" v-model="formValues.damageDate">
         </div>
+
+        <div v-if="errorRef" class="text-danger mb-2">{{ errorRef }}</div>
         <div style="display: flex; justify-content: space-between;">
           <button type="button" class="btn-dark" @click="goback">Cancel Edit</button>
           <button type="submit" class="btn btn-primary" :disabled="loading"> {{ loading ? 'Loading...' : 'Submit Changes' }}</button>
