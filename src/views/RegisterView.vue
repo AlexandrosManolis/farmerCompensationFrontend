@@ -38,7 +38,7 @@ const { performRequest } = useRemoteData(urlRef, authRef, methodRef, formDataRef
 const validateFormData = () => {
   let isValid = true;
 
-  if (!formDataRef.value.email || !formDataRef.value.username || !formDataRef.value.password || !formDataRef.value.full_name || !formDataRef.value.address || !formDataRef.value.afm || !formDataRef.value.identity_id) {
+  if (!formDataRef.value.email || !formDataRef.value.username || !formDataRef.value.password || !formDataRef.value.full_name || !formDataRef.value.address || !formDataRef.value.afm || !formDataRef.value.identity) {
     errorRef.value = "Please fill in all fields.";
     setTimeout(() => {
       errorRef.value = null;
