@@ -1,7 +1,7 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import { useRemoteData } from "@/composables/useRemoteData.js";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
 const formDataRef = ref({
   "fieldAddress": "",
@@ -14,9 +14,21 @@ const formDataRef = ref({
 });
 
 const route = useRoute();
+const router = useRouter();
 const userIdRef = ref(null);
 const errorRef = ref(null);
 
+
+const urlRef = computed(() => {
+  return 'http://localhost:9090/api/declaration/'+userIdRef.value+'/new';
+});
+
+const authRef = ref(true);
+const methodRef = ref("POST");
+
+onMounted(() => {
+  userIdRef.value = route.params.id;
+});
 
 const onSubmit = () => {
 
@@ -65,21 +77,16 @@ const onSubmit = () => {
     return;
   }
 
-
-  userIdRef.value = route.params.id;
   performRequest();
   window.location.href = '/users/'+userIdRef.value+'/user-declarations';
 };
 
-const urlRef = computed(() => {
-  return 'http://localhost:9090/api/declaration/'+userIdRef.value+'/new';
-});
-
-const authRef = ref(true);
-const methodRef = ref("POST");
-
 const { data, performRequest } = useRemoteData(urlRef, authRef, methodRef, formDataRef);
 
+const goback = () => {
+  router.push('/users/'+userIdRef.value+'/user-declarations');
+
+};
 
 </script>
 
@@ -122,6 +129,9 @@ const { data, performRequest } = useRemoteData(urlRef, authRef, methodRef, formD
         <div class="">
       <button class="btn btn-primary" @click="onSubmit" type="button">Create new Declaration</button>
     </div>
+        <div>
+          <button type="button" class="btn btn-dark btn-sm" @click="goback">Go Back</button>
+        </div>
   </div></div></div>
 </template>
 
