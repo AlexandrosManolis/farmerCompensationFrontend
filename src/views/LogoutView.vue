@@ -4,10 +4,12 @@ import { useRouter } from 'vue-router';
 import { useApplicationStore } from '@/stores/application.js';
 
 const router = useRouter();
+// Accessing the clearUserData function from the application store
 const { clearUserData } = useApplicationStore();
 
 const loading = ref(false);
 
+// Function to handle form submission (logout)
 const onFormSubmit = () => {
   // A solution is to blacklist the JWT until is expired.
   loading.value = true;
@@ -27,6 +29,7 @@ const onFormSubmit = () => {
           <div class="spinner-border" role="status" v-if="loading">
             <span class="visually-hidden">Logout loading...</span>
           </div>
+          <!-- Logout button -->
           <form v-else>
             <button @click="onFormSubmit" type="submit" class="btn btn-primary">
               Logout

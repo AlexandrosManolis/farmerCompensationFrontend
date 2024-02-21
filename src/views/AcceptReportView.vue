@@ -10,15 +10,18 @@ const route = useRoute();
 const userIdRef = ref(null);
 const declarationIdRef = ref(null);
 
+// State value
 const amount = sharedState.amount;
 
 onMounted(() => {
   userIdRef.value = route.params.userId;
   declarationIdRef.value = route.params.declarationId;
   performRequest();
+  // Redirection
   router.push('/users/'+ userIdRef.value +'/user-declarations');
 });
 
+// API URL with userId, declarationId, and amount
 const urlRef = computed(() => {
   return `http://localhost:9090/api/declaration/report/${userIdRef.value}/acceptReport/${declarationIdRef.value}?amount=${encodeURIComponent(amount)}`;
   });

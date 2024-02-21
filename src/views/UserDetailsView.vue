@@ -1,30 +1,42 @@
 <script setup>
+
+// Imports
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useRemoteData } from '@/composables/useRemoteData.js';
 
+// Initializing router and route
 const router = useRouter();
 const route = useRoute();
 
+// Define reference for the user ID
 const userIdRef = ref(null);
 
+// Authentication
 const authRef = ref(true);
 
+// Computed property for the URL to fetch user details
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/users/details/' + userIdRef.value;
 });
 
+// useRemoteData composable to fetch user details
 const { data, loading, performRequest } = useRemoteData(urlRef, authRef);
 
 userIdRef.value = route.params.id;
 onMounted(() => {
   performRequest();
 });
+
 const userid = userIdRef.value;
+
+// Function to navigate back to the users page
 const goback = () => {
   router.push('/users');
 };
 </script>
+
+
 
 <template>
   <div class="container">
@@ -72,9 +84,10 @@ const goback = () => {
       </tr>
 
       </tbody>
+      <!-- Button to go back -->
+
       <div>
         <button type="button" @click="goback">Go Back</button>
-
       </div>
     </table>
   </div>

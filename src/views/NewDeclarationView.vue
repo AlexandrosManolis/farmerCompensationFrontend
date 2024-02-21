@@ -3,6 +3,7 @@ import {computed, onMounted, ref} from "vue";
 import { useRemoteData } from "@/composables/useRemoteData.js";
 import {useRoute, useRouter} from "vue-router";
 
+// Define a reactive reference for form data
 const formDataRef = ref({
   "fieldAddress": "",
   "description": "",
@@ -19,10 +20,12 @@ const userIdRef = ref(null);
 const errorRef = ref(null);
 
 
+// Computed for the request URL
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/declaration/'+userIdRef.value+'/new';
 });
 
+// Authentication
 const authRef = ref(true);
 const methodRef = ref("POST");
 
@@ -30,6 +33,7 @@ onMounted(() => {
   userIdRef.value = route.params.id;
 });
 
+// Function to handle form submission
 const onSubmit = () => {
 
 
@@ -97,9 +101,10 @@ const goback = () => {
         <div class="fs-3 text-center mb-4">
           <h1>New Declaration</h1>
         </div>
-  <div>
-    <pre>{{ data }}</pre>
-  </div>
+        <!-- Form inputs for new declaration -->
+        <div>
+          <pre>{{ data }}</pre>
+        </div>
 
     <div class="mb-2">
       <label for="fieldAddress">Field Address</label>

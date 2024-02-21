@@ -6,6 +6,7 @@ import {useRoute, useRouter} from "vue-router";
 const authRef = ref(true);
 const errorRef = ref(null);
 
+// Initializing refs for authentication, error handling, and form data
 const formDataRef = ref({
   "username": "",
   "email": "",
@@ -20,10 +21,14 @@ const formDataRef = ref({
 
 userIdRef.value = route.params.id;
 
-  const urlRef = computed(() => {
+// Computed for constructing the URL for updating user data
+const urlRef = computed(() => {
     return 'http://localhost:9090/api/users/edit/'+ userIdRef.value;
   });
 
+// Function to handle form submission
+// Validation checks for form fields and displaying error messages if validation fails
+// Submit form data if validation passes
 const onSubmit = async () => {
   try {
 
@@ -82,6 +87,7 @@ const onSubmit = async () => {
   }
 };
 
+// Validation functions for form fields
 const validateEmail = (email) => {
   return /^\S+@\S+\.\S+$/.test(email);
 };
@@ -114,8 +120,10 @@ const checkFieldsNotEmpty = (formData) => {
 
 const methodRefPost = ref("POST");
 
+// useRemoteData to perform the POST request with form data
 const { performRequest: performPostRequest, loading } = useRemoteData(urlRef, authRef, methodRefPost, formDataRef);
 
+// Fetch user data when mounted
 onMounted(async () => {
   // Call a GET method on mount
   methodRefGet.value = "GET"; // Change the request method to GET
@@ -126,6 +134,7 @@ const methodRefGet = ref("GET");
 
 const { data: getData, performRequest: performGetRequest} = useRemoteData(urlRef, authRef, methodRefGet);
 
+// Function to navigate back to user details page
 const goback = () => {
   router.push('/user-details/'+ userIdRef.value);
 };
@@ -134,12 +143,15 @@ const goback = () => {
 
 
 <template>
+  <!-- Form for editing user data -->
   <div class="container">
     <form @submit.prevent="onSubmit">
 
+      <!-- Display form fields with current data -->
       <div v-if="getData">
         <div><h1>Edit User with ID: {{getData.id}}:</h1></div>
         <div class="form-group">
+          <!-- Input fields for editing user data -->
           <label for="username">Username: (current data -> {{getData.username}})</label>
           <input type="text" id="username" class="form-control" v-model="formDataRef.username">
 
@@ -159,9 +171,11 @@ const goback = () => {
           <input type="text" id="identity" class="form-control" v-model="formDataRef.identity" >
         </div>
 
+        <!-- Error message display -->
         <div v-if="errorRef" class="text-danger mb-2">
           {{ errorRef }}
         </div>
+        <!-- Buttons for canceling edit and submitting changes -->
         <div style="display: flex; justify-content: space-between;">
           <button type="button" class="btn-dark" @click="goback">Cancel Edit</button>
           <button type="submit" class="btn btn-primary" :disabled="loading"> {{ loading ? 'Loading...' : 'Submit Changes' }}</button>

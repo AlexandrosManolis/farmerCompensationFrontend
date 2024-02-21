@@ -1,32 +1,43 @@
 <script setup>
 
+// Imports
 import {useRoute, useRouter} from "vue-router";
 import {computed, ref, onMounted} from "vue";
 import {useRemoteData} from "@/composables/useRemoteData.js";
 
+// Initializing router and route
 const router = useRouter();
 const route = useRoute();
+
+// Creating refs for userId and declarationId
 const userIdRef = ref(null);
 const requestIdRef = ref(null);
 
 
 
 onMounted(() => {
+  // user and request IDs from the route params
   userIdRef.value = route.params.userId;
   requestIdRef.value = route.params.requestId;
+  // Perform the reject request
   performRequest();
+  // Redirection to the users page
   router.push('/users');
 });
 
+// Computed for the reject request URL
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/admin/users/requests/reject/'+userIdRef.value+'/'+ requestIdRef.value ;
 });
 
+// Authentication
 const authRef = ref(true);
+
+// Define method reference for the request
 const methodRef = ref("POST");
 
+// useRemoteData composable to perform the reject request
 const { data, performRequest } = useRemoteData(urlRef, authRef, methodRef);
-
 
 </script>
 

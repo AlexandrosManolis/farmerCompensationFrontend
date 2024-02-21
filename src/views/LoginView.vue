@@ -4,14 +4,19 @@ import {useApplicationStore} from "@/stores/application.js";
 import {onBeforeMount, ref} from "vue";
 
 const router = useRouter();
+// Accessing necessary functions from the application store
 const { setUserData, persistUserData, isAuthenticated }= useApplicationStore();
+// Creating a reactive variable for loading state
 const loading = ref(false);
 
+// Creating a reactive variable for storing user credentials
 const credentials = ref({
   username: '', password:''
 });
+// Creating a reactive variable for tracking authentication failure
 const authenticationFailed = ref(false);
 
+// Function to handle form submission
 const onFormSubmit = () => {
   loading.value = true;
   authenticationFailed.value = false;
@@ -26,16 +31,21 @@ const onFormSubmit = () => {
       .then((response) =>{
         if(response.ok){
           response.json().then((data) => {
+            // Set user data in the application store
             setUserData(data);
+            // Persist user data
             persistUserData(data);
+            // Redirect user to the home page upon successful login
             router.push({name: 'home'});
           });
         }else {
+          // Authentication failure if response is not okay
           authenticationFailed.value = true;
         }
       })
       .catch((err) => {
         console.warn(err);
+        // Authentication failure if if there's an error
         authenticationFailed.value= true;
 
       })
@@ -68,6 +78,7 @@ onBeforeMount(() => {
         </div>
       </div>
 
+      <!-- Login form -->
       <form v-else>
 
         <div class="mb-2" v-if="authenticationFailed">
@@ -76,11 +87,13 @@ onBeforeMount(() => {
           </div>
         </div>
 
+        <!-- Username input field -->
         <div class="mb-2">
           <label for="usernameFormControl" class="form-label mb-1">Username</label>
           <input v-model="credentials.username" type="text" class="form-control" id="usernameFormControl" />
         </div>
 
+        <!-- Password input field -->
         <div class="mb-2">
           <label for="passwordFormControl" class="form-label mb-1">Password</label>
           <input v-model="credentials.password" type="password" class="form-control" id="passwordFormControl" />

@@ -1,28 +1,34 @@
 <script setup>
+// Imports
 
 import {useRoute, useRouter} from "vue-router";
 import {computed, ref, onMounted} from "vue";
 import {useRemoteData} from "@/composables/useRemoteData.js";
 
+// Initializing router and route
 const router = useRouter();
 const route = useRoute();
 const userIdRef = ref(null);
-const roleIdRef = ref(null);
 
 onMounted(() => {
   userIdRef.value = route.params.userId;
+  // Perform the add role request
   performRequest();
 
+  // Redirection to the users page
   router.push('/users');
 });
 
+// Computed for the add role request URL
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/users/role/add/'+ userIdRef.value;
 });
 
+// Authentication
 const authRef = ref(true);
 const methodRef = ref("POST");
 
+// useRemoteData to perform the add role request
 const { data, performRequest } = useRemoteData(urlRef, authRef, methodRef);
 
 

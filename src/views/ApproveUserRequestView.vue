@@ -6,6 +6,7 @@ import {useRemoteData} from "@/composables/useRemoteData.js";
 
 const router = useRouter();
 const route = useRoute();
+// Creating refs for userId and requestId
 const userIdRef = ref(null);
 const requestIdRef = ref(null);
 
@@ -18,6 +19,7 @@ onMounted(() => {
   router.push('/users/requests');
 });
 
+// API URL with userId and requestId
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/admin/users/requests/accept/'+userIdRef.value+'/'+ requestIdRef.value ;
 });

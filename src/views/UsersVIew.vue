@@ -1,15 +1,24 @@
 <script setup>
 
+// Imports
 import {computed, onMounted, ref} from 'vue';
 import { useRemoteData } from '@/composables/useRemoteData.js';
 import {useApplicationStore} from "@/stores/application.js";
 import {useRoute} from "vue-router";
 
-
+// Initializing route
 const route = useRoute();
+
+// Reference for the user ID
 const userIdRef = ref(null);
+
+// Reference for the API URL
 const urlRef = ref('http://localhost:9090/api/users');
+
+// Reference for authentication status
 const authRef = ref(true);
+
+// Fetch user data from the API
 const {data, loading, performRequest} = useRemoteData(urlRef, authRef);
 
 onMounted(() => {
@@ -17,6 +26,8 @@ onMounted(() => {
   performRequest();
 });
 
+
+// Set up authentication-related variables
 const applicationStore = useApplicationStore();
 const loggedInUsername = computed(() => applicationStore.isAuthenticated ? applicationStore.userData.username : null);
 const loggedInRoles = computed(() => applicationStore.isAuthenticated ? applicationStore.userData.roles : []);
@@ -51,23 +62,32 @@ const requestedRoleName = 'ROLE INSPECTOR';
         <tbody v-if="data">
 
         <template v-if="Array.isArray(data)">
+          <!-- Loop through user data -->
           <tr v-for="user in data" :key="user.id">
             <td>{{ user.id }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
+
+            <!-- View user details -->
             <td>
               <RouterLink :to="{name: 'user-details', params: { id: user.id }}" class="btn btn-primary">Details</RouterLink>
             </td>
-              <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
+            <!-- Edit user (admin) -->
+            <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
                 <RouterLink :to="{name: 'user-edit', params: { id: user.id }}" class="btn btn-primary" >Edit</RouterLink>
 
               </td>
-              <td v-if="loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_FARMER')">
+            <!-- Edit user (inspector or farmer) -->
+
+            <td v-if="loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_FARMER')">
                 <RouterLink :to="{name: 'user-edit', params: { id: user.id }}" class="btn btn-primary" v-if="user.username === loggedInUsername" >Edit</RouterLink>
               </td>
+            <!-- View user declarations -->
+
             <td>
               <RouterLink :to="{name: 'user-declarations', params: { id: user.id }}" class="btn btn-primary" >Declarations</RouterLink>
             </td>
+            <!-- Delete user role (admin) -->
 
             <td v-if="loggedInRoles.includes('ROLE_ADMIN') && (user.roles.some(role => role.name === 'ROLE_INSPECTOR'))">
 
@@ -106,6 +126,7 @@ const requestedRoleName = 'ROLE INSPECTOR';
 
         </tbody></table>
     </div>
+          <!-- User Requests and Create new user buttons for admin -->
           <div class="button-container mt-3">
             <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
               <RouterLink :to="{ name: 'user-requests'}" class="btn btn-primary ml-2">User Requests</RouterLink>

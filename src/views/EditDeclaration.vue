@@ -3,6 +3,7 @@ import {ref, computed, onMounted} from "vue";
 import { useRemoteData } from "@/composables/useRemoteData.js";
 import {useRoute, useRouter} from "vue-router";
 
+// Initializing form values
 const formValues = ref({
   fieldAddress: "",
   description: "",
@@ -15,13 +16,18 @@ const formValues = ref({
 
 const router = useRouter();
 const route = useRoute();
+// Creating refs for userId, declarationId, and error handling
 const userIdRef = ref(null);
 const declarationIdRef = ref(null);
 const errorRef = ref(null);
 
+// Assigning values to userId and declarationId from route params
 userIdRef.value = route.params.userId;
 declarationIdRef.value = route.params.declarationId;
 
+// Function to handle form submission
+// Validation checks for form fields and displaying error messages if validation fails
+// Submit form data if validation passes
 const onSubmit = async () => {
   if (!formValues.value.fieldAddress || !formValues.value.description || !formValues.value.plant_production || !formValues.value.annualStartProduction || !formValues.value.fieldSize || !formValues.value.damageDate) {
     errorRef.value = "Please fill in all fields.";
@@ -76,6 +82,7 @@ const onSubmit = async () => {
   }
 };
 
+// Computed for constructing the URL for updating declaration data
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/declaration/' + userIdRef.value + '/edit/' + declarationIdRef.value;
 });
@@ -96,6 +103,7 @@ const methodRefGet = ref("GET");
 
 const { data: getData, performRequest: performGetRequest} = useRemoteData(urlRef, authRefGet, methodRefGet);
 
+// Function to handle navigation back to previous page
 const goback = () => {
   router.push('/users/'+userIdRef.value+'/user-declarations');
 };
@@ -104,9 +112,11 @@ const goback = () => {
 
 
 <template>
+  <!-- Form for editing declaration data -->
   <div class="container">
     <form @submit.prevent="onSubmit">
 
+      <!-- Display form fields with current data -->
       <div v-if="getData">
 
       <div><h1> Edit declaration {{getData.id}}:</h1></div>
@@ -130,7 +140,9 @@ const goback = () => {
           <input type="date" id="damageDate" class="form-control" v-model="formValues.damageDate">
         </div>
 
+        <!-- Error message display -->
         <div v-if="errorRef" class="text-danger mb-2">{{ errorRef }}</div>
+        <!-- Buttons for canceling edit and submitting changes -->
         <div style="display: flex; justify-content: space-between;">
           <button type="button" class="btn-dark" @click="goback">Cancel Edit</button>
           <button type="submit" class="btn btn-primary" :disabled="loading"> {{ loading ? 'Loading...' : 'Submit Changes' }}</button>

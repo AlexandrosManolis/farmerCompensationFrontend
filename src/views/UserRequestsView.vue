@@ -1,21 +1,33 @@
 <script setup>
+// Imports
 import {computed, onMounted, ref} from 'vue';
 import { useRemoteData } from '@/composables/useRemoteData.js';
+import {useRouter} from "vue-router";
 
-
-
+// Define reference for authentication
 const authRef = ref(true);
+const router= useRouter();
 
-
+// Computed for the URL to fetch user requests
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/admin/users/requests';
 });
+
+// useRemoteData composable to fetch user requests
 const {data, loading, performRequest} = useRemoteData(urlRef, authRef);
 
+
+// Fetch user requests when mounted
 onMounted(() => {
   performRequest();
 });
+
+// Function to navigate back to user details page
+const goback = () => {
+  router.push('/users');
+};
 </script>
+
 
 <template>
   <div class="container">
@@ -46,6 +58,7 @@ onMounted(() => {
               <td><RouterLink :to="{name: 'approve-request', params: { userId: request.user.id, requestId: request.id }}" class="btn btn-success">Approve!</RouterLink></td>
 
           </tr>
+
         </template>
         <template v-else-if="data.length === 0">
           <tr>
@@ -64,8 +77,13 @@ onMounted(() => {
         </template>
         </tbody>
       </table>
+      <div>
+        <button type="button" class="btn-dark" @click="goback">Go Back!</button>
+      </div>
+
     </div>
   </div>
+
 </template>
 
 <style scoped>

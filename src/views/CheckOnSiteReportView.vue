@@ -6,6 +6,7 @@ import {useRemoteData} from "@/composables/useRemoteData.js";
 
 const router = useRouter();
 const route = useRoute();
+// Creating refs for userId and declarationId
 const userIdRef = ref(null);
 const declarationIdRef = ref(null);
 
@@ -18,6 +19,7 @@ onMounted(() => {
   router.push('/users/'+ userIdRef.value +'/user-declarations');
 });
 
+// API URL with userId and declarationId
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/declaration/report/'+userIdRef.value+'/checkonsite/'+ declarationIdRef.value ;
 });

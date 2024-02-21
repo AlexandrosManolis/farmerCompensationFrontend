@@ -15,16 +15,20 @@ onMounted(() => {
   userIdRef.value = route.params.userId;
   declarationIdRef.value = route.params.declarationId;
   performRequest();
+  // Redirection to the user declarations page
   router.push('/users/'+ userIdRef.value +'/user-declarations');
 });
 
+// Computed for the reject report request URL
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/declaration/report/'+userIdRef.value+'/rejectReport/'+ declarationIdRef.value ;
 });
 
 const authRef = ref(true);
+// Define method reference for the request
 const methodRef = ref("POST");
 
+// useRemoteData to perform the reject report request
 const { data, performRequest } = useRemoteData(urlRef, authRef, methodRef);
 
 

@@ -3,6 +3,7 @@ import {computed, ref} from 'vue';
 import { useRemoteData } from "@/composables/useRemoteData.js";
 import router from "@/router/index.js";
 
+// Define a reactive reference for form data
 const formDataRef = ref({
   "email": "",
   "username": "",
@@ -12,18 +13,24 @@ const formDataRef = ref({
   "afm": "",
   "identity": "",
 });
+// Define references for error and success messages
 const errorRef = ref(null);
 const successRef = ref(null);
 
+// Function to handle form submission
 const onSubmit = async () => {
   if (validateFormData()) {
+    // Perform the request to create a new user
     await performRequest();
+    // Display success message
     successRef.value = 'User registered successfully!';
+    // Redirect the user
     router.push('/users');
   }
 };
 
 
+// Computed property for the request URL
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/auth/signup';
 });
@@ -35,6 +42,7 @@ const { performRequest } = useRemoteData(urlRef, authRef, methodRef, formDataRef
 
 
 
+// Function to validate form data
 const validateFormData = () => {
   let isValid = true;
 
@@ -96,6 +104,11 @@ const validateFormData = () => {
 
   return isValid;
 }
+
+// Function to navigate back to user details page
+const goback = () => {
+  router.push('/users');
+};
 </script>
 
 <template>
@@ -143,7 +156,9 @@ const validateFormData = () => {
           <div v-if="successRef" class="text-success mb-2">
             {{ successRef }}
           </div>
+          <!-- Submit button -->
           <button class="btn btn-primary" @click="onSubmit" type="button">Create new User</button>
+          <button type="button" class="btn-dark" @click="goback">Cancel</button>
         </div>
       </div>
     </div>

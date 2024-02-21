@@ -4,15 +4,23 @@ import { useRouter, useRoute } from 'vue-router';
 import { useRemoteData } from '@/composables/useRemoteData.js';
 import {useApplicationStore} from "@/stores/application.js";
 
+// Initializing router and route
 const router = useRouter();
 const route = useRoute();
 
+// Creating refs for userId and declarationId
 const userIdRef = ref(null);
 const declarationIdRef = ref(null);
 
+// Setting userId and declarationId from route params
 userIdRef.value = route.params.userId;
 declarationIdRef.value = route.params.declarationId;
 
+onMounted(() => {
+  performRequest();
+});
+
+// API URL with userId and declarationId
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/declaration/'+ userIdRef.value+'/details/' + declarationIdRef.value;
 });
@@ -21,16 +29,18 @@ const authRef = ref(true);
 const { data, loading, performRequest } = useRemoteData(urlRef, authRef);
 
 const applicationStore = useApplicationStore();
+// Computed for loggedInRoles and loggedInId
 const loggedInRoles = computed(() => applicationStore.isAuthenticated ? applicationStore.userData.roles : []);
-
 const loggedInId = computed(() => applicationStore.isAuthenticated ? applicationStore.userData.id : null);
 
-const declarationId = declarationIdRef.value;
-const userId= userIdRef.value;
-onMounted(() => {
-  performRequest();
-});
+const checkUser = () => {
+  return loggedInRoles.value.includes('ROLE_ADMIN') || (loggedInId.value == userIdRef.value);
+};
 
+const declarationId = declarationIdRef.value;
+
+
+// Function to navigate back to the user-declarations route
 const goback = () => {
   router.push('/users/'+ userIdRef.value+ '/user-declarations');
 };
@@ -98,9 +108,9 @@ const goback = () => {
 
       </tbody>
       <button type="button" @click="goback" >Go Back!</button>
-      <div v-if="loggedInRoles.includes('ROLE_ADMIN') || (loggedInId.value === userId)">
+      <!-- Show edit declaration link for admins or the user who owns the declaration -->
+      <div v-if="checkUser()">
         <RouterLink :to="{name: 'edit-declaration', params: {userId: userIdRef.value, declarationId: declarationIdRef.value}}">Edit Declaration</RouterLink>
-
       </div>
 
     </table>

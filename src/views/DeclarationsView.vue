@@ -6,10 +6,12 @@ import {useRoute, useRouter} from "vue-router";
 import {useApplicationStore} from "@/stores/application.js";
 import {sharedState} from "@/stores/sharedState.js";
 
+// Initializing router and route
 const router = useRouter();
 const route = useRoute();
 const authRef = ref(true);
 
+// Creating ref for userId
 const userIdRef = ref(null);
 
 onMounted(() => {
@@ -18,6 +20,7 @@ onMounted(() => {
 });
 
 
+// API URL with userId
 const urlRef = computed(() => {
   return 'http://localhost:9090/api/declaration/' + userIdRef.value;
 });
@@ -26,15 +29,19 @@ const {data, loading, performRequest} = useRemoteData(urlRef, authRef);
 
 
 const applicationStore = useApplicationStore();
+// Computed for loggedInUserId and loggedInRoles
 const loggedInUserId = computed(() => applicationStore.isAuthenticated ? applicationStore.userData.id : null);
 const loggedInRoles = computed(() => applicationStore.isAuthenticated ? applicationStore.userData.roles : []);
 
+// Navigation back to the users route
 const goback = () => {
   router.push('/users');
 };
 
+// Creating a ref to see if the amount input is empty
 const isAmountEmpty = ref(true);
 
+// Function to enable/disable the accept button based on the amount input
 function EnableDisable(event) {
   // Assuming event is always defined (from @keyup)
   const amount = event.target.value.trim();
@@ -42,6 +49,7 @@ function EnableDisable(event) {
   sharedState.amount = amount;
 }
 
+// Function to navigate to the accept report route
 const navigateToAcceptReport = (declaration) => {
   router.push({
     name: 'accept-report',
@@ -75,11 +83,13 @@ const navigateToAcceptReport = (declaration) => {
               <td colspan="5">Loading...</td>
             </tr>
             </tbody>
+            <!-- Display declarations -->
             <tbody v-if="data">
 
             <template v-if="Array.isArray(data)  && data.length > 0">
               <tr v-for="declaration in data" :key="declaration.id">
 
+                <!-- Declaration details -->
                 <td>{{ declaration.id }}</td>
                 <td>{{ declaration.description }}</td>
                 <td>{{ declaration.submissionDate}}</td>
@@ -91,26 +101,31 @@ const navigateToAcceptReport = (declaration) => {
                   <RouterLink :to="{name: 'declaration-details', params: { userId: declaration.userId, declarationId: declaration.id}}" class="btn btn-primary">Report</RouterLink>
                 </td>
 
+                <!-- Check on Site button -->
                 <td v-if="(loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted' || declaration.status === 'Check on site'))">
                   <RouterLink :to="{name: 'checkOnSite-report', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-info narrow-button btn-sm" role="button"><span >Check on Site</span></RouterLink>
                 </td>
 
+                <!-- Reject button -->
                 <td v-if="(loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted'))">
 
                   <RouterLink :to="{name: 'reject-report', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Reject</span></RouterLink>
                   <div class="spacer"></div>
 
 
-                    <label>Refund Amount:</label>
+                  <!-- Amount for accepting -->
+                  <label>Refund Amount:</label>
                     <input type="text" id="amount" name="amount" @input="EnableDisable" />
                     <button @click.prevent="()=> navigateToAcceptReport(declaration)" id="acceptButton" type="submit" value="Submit" role="button" class="btn btn-success narrow-button btn-sm" :disabled="isAmountEmpty"><span >Accept</span></button>
 
                 </td>
 
+                <!-- Delete declaration button for farmers and inspectors -->
                 <td v-if="(loggedInRoles.includes('ROLE_FARMER') || loggedInRoles.includes('ROLE_INSPECTOR')) && loggedInUserId === declaration.userId ">
 
                   <RouterLink :to="{name: 'delete-declaration', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Delete Declaration!</span></RouterLink>
                 </td>
+                <!-- Delete declaration button for admins -->
                 <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
 
                   <RouterLink :to="{name: 'delete-declaration', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Delete Declaration!</span></RouterLink>
@@ -126,6 +141,7 @@ const navigateToAcceptReport = (declaration) => {
             </template>
             </tbody>
           </table>
+          <!-- Add Declaration button -->
           <div v-if="loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_FARMER')">
             <RouterLink v-if="route.params.id == loggedInUserId" :to="{name: 'add-declaration'}" class="btn btn-primary">Add Declaration!</RouterLink>
           </div>
@@ -133,6 +149,7 @@ const navigateToAcceptReport = (declaration) => {
             <RouterLink :to="{name: 'add-declaration'}" class="btn btn-primary btn-sm">Add Declaration!</RouterLink>
           </div>
           <div class="spacer"></div>
+          <!-- Go back button -->
           <div>
             <button type="button" class="btn btn-dark btn-sm" @click="goback">Go Back</button>
           </div>
