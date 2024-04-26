@@ -49,8 +49,9 @@ const goback = () => {
 <template>
   <div class="container">
     <header>
-      <div><h1>Declaration {{declarationId}} details:</h1></div>
+      <div class="header text-center mb-4"><h1>Declaration {{declarationId}} details:</h1></div>
     </header>
+      <div class="declaration-details">
     <table class="table">
 
       <thead>
@@ -76,6 +77,10 @@ const goback = () => {
       <tr>
         <th>Damage date</th>
         <td>{{ data.damageDate }}</td>
+      </tr>
+      <tr>
+        <th>Natural Disaster</th>
+        <td>{{ data.naturalDisaster }}</td>
       </tr>
       <tr>
         <th>Plant production</th>
@@ -107,49 +112,97 @@ const goback = () => {
       </tr>
 
       </tbody>
-      <button type="button" @click="goback" >Go Back!</button>
-      <!-- Show edit declaration link for admins or the user who owns the declaration -->
-      <div v-if="checkUser()">
-        <RouterLink :to="{name: 'edit-declaration', params: {userId: userIdRef.value, declarationId: declarationIdRef.value}}">Edit Declaration</RouterLink>
-      </div>
+      <div class="d-flex justify-content-between align-items-end mt-3">
 
+        <div class="col">
+          <!-- Go back button -->
+          <div class="mt-3">
+            <button type="button" class="btn btn-dark btn-sm" @click="goback">Go Back</button>
+          </div>
+        </div>
+
+        <!-- Show edit declaration link for admins or the user who owns the declaration -->
+        <div class="col-auto">
+          <div v-if="checkUser()">
+            <RouterLink :to="{name: 'edit-declaration', params: {userId: userIdRef.value, declarationId: declarationIdRef.value}} "  class="btn btn-success btn-lg">Edit Declaration</RouterLink>
+          </div>
+        </div>
+
+      </div>
     </table>
+      </div>
   </div>
 
 </template>
 
 <style scoped>
+:root {
+  --primary-color: #007bff;
+  --text-color: #333;
+  --background-color: #f8f9fa;
+  --white: #fff;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  line-height: 1.6;
+}
+
 .container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 100vh;
-
+  padding: 20px;
 }
 
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  font-size: 2rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: var(--text-color);
+}
+
+.declaration-details {
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--white);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
 
 .table {
-  width: 90vw; /* Dynamic width based on viewport width */
-  max-width: 600px;
-  padding: 20px;
-  border: 1px solid #dee2e6; /* Set your desired border color */
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.btn-primary {
   width: 100%;
+  border-collapse: collapse;
 }
 
-@media (min-width: 768px) {
-  .table {
-    width: 50vw; /* Adjust the width based on your preference */
-  }
+.table td {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  color: var(--text-color);
 }
+
+
+/* Additional styling for buttons and icons */
+.btn {
+  margin-right: 8px;
+  padding: 10px 24px; /* Increase padding */
+  font-size: 16px; /* Increase font size */
+}
+
+.fa {
+  margin-right: 5px;
+}
+
 </style>

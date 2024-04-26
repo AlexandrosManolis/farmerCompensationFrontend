@@ -57,105 +57,127 @@ const navigateToAcceptReport = (declaration) => {
   });
 };
 
+const fireDeclarations=() =>{
+  return this.data.filter(declaration => declaration.naturalDisaster === 'Wildfire');
+}
+const floodDeclarations=() =>{
+  return this.data.filter(declaration => declaration.naturalDisaster === 'Flood');
+}
+const badWeatherDeclarations=() =>{
+  return this.data.filter(declaration => declaration.naturalDisaster === 'Bad Weather');
+}
+const landslideDeclarations=() =>{
+  return this.data.filter(declaration => declaration.naturalDisaster === 'Landslide');
+}
+
+
 </script>
 
 <template>
   <div class="container">
     <div class="users-card">
       <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="mb-4">
-          <h1 class="fs-3 text-center">Declarations</h1>
-        </div>
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-            <tr>
-              <th>ID</th>
-              <th>Description</th>
-              <th>Submission Date</th>
-              <th>Current Status</th>
-              <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody v-if="loading" class="loading-spinner">
-            <tr>
-              <td colspan="5">Loading...</td>
-            </tr>
-            </tbody>
-            <!-- Display declarations -->
-            <tbody v-if="data">
-
-            <template v-if="Array.isArray(data)  && data.length > 0">
-              <tr v-for="declaration in data" :key="declaration.id">
-
-                <!-- Declaration details -->
-                <td>{{ declaration.id }}</td>
-                <td>{{ declaration.description }}</td>
-                <td>{{ declaration.submissionDate}}</td>
-                <td class="d-flex align-items-center"><button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.status" disabled></button></td>
-
-                <td class="d-flex align-items-center" v-if="declaration.status === 'Accepted'"><span>Total amount:</span><button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.amount" disabled></button></td>
-
-                <td>
-                  <RouterLink :to="{name: 'declaration-details', params: { userId: declaration.userId, declarationId: declaration.id}}" class="btn btn-primary">Report</RouterLink>
-                </td>
-
-                <!-- Check on Site button -->
-                <td v-if="(loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted' || declaration.status === 'Check on site'))">
-                  <RouterLink :to="{name: 'checkOnSite-report', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-info narrow-button btn-sm" role="button"><span >Check on Site</span></RouterLink>
-                </td>
-
-                <!-- Reject button -->
-                <td v-if="(loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted'))">
-
-                  <RouterLink :to="{name: 'reject-report', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Reject</span></RouterLink>
-                  <div class="spacer"></div>
-
-
-                  <!-- Amount for accepting -->
-                  <label>Refund Amount:</label>
-                    <input type="text" id="amount" name="amount" @input="EnableDisable" />
-                    <button @click.prevent="()=> navigateToAcceptReport(declaration)" id="acceptButton" type="submit" value="Submit" role="button" class="btn btn-success narrow-button btn-sm" :disabled="isAmountEmpty"><span >Accept</span></button>
-
-                </td>
-
-                <!-- Delete declaration button for farmers and inspectors -->
-                <td v-if="(loggedInRoles.includes('ROLE_FARMER') || loggedInRoles.includes('ROLE_INSPECTOR')) && loggedInUserId === declaration.userId ">
-
-                  <RouterLink :to="{name: 'delete-declaration', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Delete Declaration!</span></RouterLink>
-                </td>
-                <!-- Delete declaration button for admins -->
-                <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
-
-                  <RouterLink :to="{name: 'delete-declaration', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Delete Declaration!</span></RouterLink>
-                </td>
-
-               </tr>
-            </template>
-            <template v-else>
-                <tr>
-                  <td colspan="4">No Declarations found!</td>
-
+        <div class="col-md-8">
+          <div class="mb-4">
+            <h1 class="fs-3 text-center">Declarations</h1>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr style="text-align: center;vertical-align: middle;" >
+                  <th>ID</th>
+                  <th>Description</th>
+                  <th>Natural Disaster</th>
+                  <th>Submission Date</th>
+                  <th>Current Status</th>
+                  <th colspan="3" style="text-align: center;">Actions</th>
                 </tr>
-            </template>
-            </tbody>
-          </table>
-          <!-- Add Declaration button -->
-          <div v-if="loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_FARMER')">
-            <RouterLink v-if="route.params.id == loggedInUserId" :to="{name: 'add-declaration'}" class="btn btn-primary">Add Declaration!</RouterLink>
-          </div>
-          <div v-if="loggedInRoles.includes('ROLE_ADMIN')">
-            <RouterLink :to="{name: 'add-declaration'}" class="btn btn-primary btn-sm">Add Declaration!</RouterLink>
-          </div>
-          <div class="spacer"></div>
-          <!-- Go back button -->
-          <div>
-            <button type="button" class="btn btn-dark btn-sm" @click="goback">Go Back</button>
+                </thead>
+                <tbody v-if="loading" class="loading-spinner">
+                <tr>
+                  <td colspan="5">Loading...</td>
+                </tr>
+                </tbody>
+                <!-- Display declarations -->
+                <tbody v-if="data" style="color: lightgray">
+
+                <template v-if="Array.isArray(data)  && data.length > 0">
+                  <tr v-for="declaration in data" :key="declaration.id" style="text-align: center; vertical-align: middle;">
+
+                    <!-- Declaration details -->
+                    <td>{{ declaration.id }}</td>
+                    <td>{{ declaration.description }}</td>
+                    <td>{{declaration.naturalDisaster}}</td>
+                    <td>{{ declaration.submissionDate}}</td>
+                    <td><button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.status" disabled></button></td>
+
+                    <td class="d-flex align-items-center" v-if="declaration.status === 'Accepted'"><span>Total amount:</span><button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.amount" disabled></button></td>
+
+                    <td>
+                      <RouterLink :to="{name: 'declaration-details', params: { userId: declaration.userId, declarationId: declaration.id}}" class="btn btn-primary">Report</RouterLink>
+                    </td>
+
+                    <!-- Check on Site button -->
+                    <td v-if="((loggedInRoles.includes('ROLE_INSPECTOR') && loggedInUserId != declaration.userId) || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted' || declaration.status === 'Check on site'))">
+                      <RouterLink :to="{name: 'checkOnSite-report', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-info narrow-button btn-sm" role="button"><span >Check on Site</span></RouterLink>
+                    </td>
+
+                    <!-- Reject button -->
+                    <td v-if="((loggedInRoles.includes('ROLE_INSPECTOR') && loggedInUserId != declaration.userId)  || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted'))">
+
+                      <RouterLink :to="{name: 'reject-report', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Reject</span></RouterLink>
+                      <div class="spacer"></div>
+
+
+                      <!-- Amount for accepting -->
+                      <label>Refund Amount:</label>
+                      <input type="text" id="amount" name="amount" @input="EnableDisable" />
+                      <button @click.prevent="()=> navigateToAcceptReport(declaration)" id="acceptButton" type="submit" value="Submit" role="button" class="btn btn-success narrow-button btn-sm" :disabled="isAmountEmpty"><span >Accept</span></button>
+
+                    </td>
+
+                    <!-- Delete declaration button for farmers and inspectors -->
+                    <td v-if="(loggedInRoles.includes('ROLE_FARMER') || loggedInRoles.includes('ROLE_INSPECTOR')) && loggedInUserId === declaration.userId ">
+
+                      <RouterLink :to="{name: 'delete-declaration', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Delete Declaration!</span></RouterLink>
+                    </td>
+                    <!-- Delete declaration button for admins -->
+                    <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
+
+                      <RouterLink :to="{name: 'delete-declaration', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Delete Declaration!</span></RouterLink>
+                    </td>
+
+                  </tr>
+                </template>
+                <template v-else>
+                  <tr style="text-align: center; vertical-align: middle;">
+                    <td colspan="4">No Declarations found!</td>
+
+                  </tr>
+                </template>
+                </tbody>
+            </table>
+
+            <!-- Add Declaration button -->
+            <div v-if="loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_FARMER')" style="text-align: center; vertical-align: middle;">
+              <RouterLink v-if="route.params.id == loggedInUserId" :to="{name: 'add-declaration'}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Declaration</RouterLink>
+            </div>
+
+            <div v-if="loggedInRoles.includes('ROLE_ADMIN')" style="text-align: center; vertical-align: middle;">
+              <RouterLink :to="{name: 'add-declaration'}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Declaration</RouterLink>
+            </div>
+
+            <!-- Go back button -->
+            <div class="mt-3">
+              <button type="button" class="btn btn-dark btn-sm" @click="goback">Go Back</button>
+            </div>
           </div>
         </div>
-      </div></div></div></div>
+      </div>
+    </div>
+  </div>
 </template>
+
 
 <style scoped>
 .container {
@@ -163,8 +185,8 @@ const navigateToAcceptReport = (declaration) => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-
 }
+
 .users-card {
   width: 90vw;
   max-width: 900px;
@@ -172,6 +194,14 @@ const navigateToAcceptReport = (declaration) => {
   border: 1px solid #dee2e6;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-x: auto; /* Add horizontal scroll if content overflows */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  table-layout: auto; /* Allow table to expand beyond its container */
 }
 
 .loading-spinner {
@@ -182,20 +212,33 @@ const navigateToAcceptReport = (declaration) => {
 
 .btn-primary {
   width: 100%;
+  transition: all 0.3s ease-in-out; /* Add transition */
+  border-radius: 25px; /* Make buttons round */
+  background-color: #007bff; /* Change button color */
+  border: none; /* Remove border */
+  color: white; /* Change text color */
 }
-.spacer{
-  height: 10px;
+
+.btn-primary:hover {
+  transform: scale(1.05); /* Add scale effect on hover */
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.2); /* Add shadow on hover */
+  background-color: #0056b3; /* Change button color on hover */
+}
+
+/* Additional styling for buttons and icons */
+.btn {
+  margin-right: 8px;
+  padding: 10px 24px; /* Increase padding */
+  font-size: 16px; /* Increase font size */
+}
+
+.fa {
+  margin-right: 5px;
 }
 
 @media (min-width: 768px) {
   .users-card {
-    width: 50vw; /* Adjust the width based on your preference */
+    width: 50vw;
   }
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
 }
 </style>

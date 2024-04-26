@@ -8,8 +8,10 @@ const formValues = ref({
   fieldAddress: "",
   description: "",
   plant_production: "",
-  annualStartProduction: "",
   fieldSize: "",
+  naturalDisaster: "",
+  otherDisaster:"",
+  annualStartProduction: "",
   damageDate: "",
 });
 
@@ -29,7 +31,11 @@ declarationIdRef.value = route.params.declarationId;
 // Validation checks for form fields and displaying error messages if validation fails
 // Submit form data if validation passes
 const onSubmit = async () => {
-  if (!formValues.value.fieldAddress || !formValues.value.description || !formValues.value.plant_production || !formValues.value.annualStartProduction || !formValues.value.fieldSize || !formValues.value.damageDate) {
+  if(formValues.value.otherDisaster != "Other"){
+    formValues.value.naturalDisaster = formValues.value.otherDisaster;
+  }
+
+  if (!formValues.value.fieldAddress || !formValues.value.description || !formValues.value.plant_production || !formValues.value.annualStartProduction || !formValues.value.fieldSize || !formValues.value.damageDate || !formValues.value.naturalDisaster) {
     errorRef.value = "Please fill in all fields.";
     setTimeout(() => {
       errorRef.value = null;
@@ -105,7 +111,7 @@ const { data: getData, performRequest: performGetRequest} = useRemoteData(urlRef
 
 // Function to handle navigation back to previous page
 const goback = () => {
-  router.push('/users/'+userIdRef.value+'/user-declarations');
+  router.push('/'+userIdRef.value+'/declaration-details/'+ declarationIdRef.value);
 };
 
 </script>
@@ -130,11 +136,26 @@ const goback = () => {
           <label for="plant_production">Plant Production: (current data -> {{getData.plant_production}})</label>
           <input type="text" id="plant_production" class="form-control" v-model="formValues.plant_production">
 
-          <label for="annualStartProduction">Annual Start Production: (current data -> {{getData.annualStartProduction}})</label>
-          <input type="date" id="annualStartProduction" class="form-control" v-model="formValues.annualStartProduction">
-
           <label for="fieldSize">Field Size: (current data -> {{getData.fieldSize}})</label>
           <input type="text" id="fieldSize" class="form-control" v-model.lazy="formValues.fieldSize" >
+
+
+          <label for="dropdown">Natural Disaster: (current data -> {{getData.naturalDisaster}})</label>
+          <select class="form-control" v-model="formValues.otherDisaster" id="dropdown">
+            <option>Bad Weather</option>
+            <option>Flood</option>
+            <option>Wildfire</option>
+            <option>Landslide</option>
+            <option>Other</option>
+          </select>
+
+          <div v-if="formValues.otherDisaster === 'Other'">
+            <label for="otherDisaster">Other (please specify):</label>
+            <input type="text" class="form-control" v-model="formValues.naturalDisaster">
+          </div>
+
+          <label for="annualStartProduction">Annual Start Production: (current data -> {{getData.annualStartProduction}})</label>
+          <input type="date" id="annualStartProduction" class="form-control" v-model="formValues.annualStartProduction">
 
           <label for="damageDate">Damage Date: (current data -> {{getData.damageDate}})</label>
           <input type="date" id="damageDate" class="form-control" v-model="formValues.damageDate">
@@ -144,7 +165,7 @@ const goback = () => {
         <div v-if="errorRef" class="text-danger mb-2">{{ errorRef }}</div>
         <!-- Buttons for canceling edit and submitting changes -->
         <div style="display: flex; justify-content: space-between;">
-          <button type="button" class="btn-dark" @click="goback">Cancel Edit</button>
+          <button type="button" class="btn btn-dark btn-sm" @click="goback">Cancel Edit</button>
           <button type="submit" class="btn btn-primary" :disabled="loading"> {{ loading ? 'Loading...' : 'Submit Changes' }}</button>
         </div>
 
