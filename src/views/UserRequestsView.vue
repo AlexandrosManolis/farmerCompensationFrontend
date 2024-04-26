@@ -78,7 +78,7 @@ const goback = () => {
         </tbody>
       </table>
       <div>
-        <button type="button" class="btn-dark" @click="goback">Go Back!</button>
+        <button type="button" class="btn btn-dark btn-sm" @click="goback">Go Back</button>
       </div>
 
     </div>

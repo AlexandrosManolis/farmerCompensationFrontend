@@ -41,165 +41,183 @@ const requestedRoleName = 'ROLE INSPECTOR';
     <div class="users-card">
       <div class="row justify-content-center">
         <div class="col-md-8">
-          <div class="mb-4">
+          <div class="header">
             <h1 class="fs-3 text-center">Users</h1>
           </div>
           <div class="table-responsive">
-        <table class="table">
-        <thead>
-        <tr>
-          <th>ID</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody v-if="loading" class="loading-spinner">
-          <tr>
-            <td colspan="5">Loading...</td>
-          </tr>
-        </tbody>
-        <tbody v-if="data">
-
-        <template v-if="Array.isArray(data)">
-          <!-- Loop through user data -->
-          <tr v-for="user in data" :key="user.id">
-            <td>{{ user.id }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
-
-            <!-- View user details -->
-            <td>
-              <RouterLink :to="{name: 'user-details', params: { id: user.id }}" class="btn btn-primary">Details</RouterLink>
-            </td>
-            <!-- Edit user (admin) -->
-            <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
-                <RouterLink :to="{name: 'user-edit', params: { id: user.id }}" class="btn btn-primary" >Edit</RouterLink>
-
-              </td>
-            <!-- Edit user (inspector or farmer) -->
-
-            <td v-if="loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_FARMER')">
-                <RouterLink :to="{name: 'user-edit', params: { id: user.id }}" class="btn btn-primary" v-if="user.username === loggedInUsername" >Edit</RouterLink>
-              </td>
-            <!-- View user declarations -->
-
-            <td>
-              <RouterLink :to="{name: 'user-declarations', params: { id: user.id }}" class="btn btn-primary" >Declarations</RouterLink>
-            </td>
-            <!-- Delete user role (admin) -->
-
-            <td v-if="loggedInRoles.includes('ROLE_ADMIN') && (user.roles.some(role => role.name === 'ROLE_INSPECTOR'))">
-
-              <RouterLink :to="{name: 'delete-role', params: { userId: user.id, roleId: user.roles.find(role => role.name === 'ROLE_INSPECTOR')?.id}}" class="btn btn-danger" >Delete role {{user.roles.name}}</RouterLink>
-
-            </td>
-
-          </tr>
-        </template>
-        <template v-else>
-          <tr>
-            <td>{{ data.id }}</td>
-            <td>{{ data.username }}</td>
-            <td>{{ data.email }}</td>
-            <td>
-              <RouterLink :to="{name: 'user-details', params: { id: data.id }}" class="btn btn-primary">Details</RouterLink>
-            </td>
-            <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
-              <RouterLink :to="{name: 'user-edit', params: { id: data.id }}" class="btn btn-primary" >Edit</RouterLink>
-            </td>
-            <td v-if="loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_FARMER')">
-              <RouterLink :to="{name: 'user-edit', params: { id: data.id }}" class="btn btn-primary" v-if="data.username === loggedInUsername" >Edit</RouterLink>
-            </td>
-            <td>
-              <RouterLink :to="{name: 'user-declarations', params: { id: data.id }}" class="btn btn-primary" >Declarations</RouterLink>
-            </td>
-
-              <td v-if="loggedInRoles.includes('ROLE_FARMER') && (loggedInRoles.length === 1)">
-
-              <RouterLink :to="{name: 'request-for-role', params: { userId: data.id}}" class="btn btn-success" v-if="data.username === loggedInUsername" >Request for
-                {{ requestedRoleName }}</RouterLink>
-              </td>
-
-          </tr>
-        </template>
-
-        </tbody></table>
-    </div>
+            <table class="table">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody v-if="loading" class="loading-spinner">
+              <tr>
+                <td colspan="5">Loading...</td>
+              </tr>
+              </tbody>
+              <tbody v-if="data">
+              <template v-if="Array.isArray(data)">
+                <!-- Loop through user data -->
+                <tr v-for="user in data" :key="user.id">
+                  <td>{{ user.id }}</td>
+                  <td>{{ user.username }}</td>
+                  <td>{{ user.email }}</td>
+                  <!-- View user details -->
+                  <td>
+                    <router-link :to="{name: 'user-details', params: { id: user.id }}" class="btn btn-primary">
+                      <i class="fas fa-info-circle"></i> Details
+                    </router-link>
+                  </td>
+                  <!-- Edit user (admin) -->
+                  <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
+                    <router-link :to="{name: 'user-edit', params: { id: user.id }}" class="btn btn-primary">
+                      <i class="fas fa-edit"></i> Edit
+                    </router-link>
+                  </td>
+                  <!-- Edit user (inspector or farmer) -->
+                  <td v-if="loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_FARMER')">
+                    <router-link :to="{name: 'user-edit', params: { id: user.id }}" class="btn btn-primary" v-if="user.username === loggedInUsername">
+                      <i class="fas fa-edit"></i> Edit
+                    </router-link>
+                  </td>
+                  <!-- View user declarations -->
+                  <td>
+                    <router-link :to="{name: 'user-declarations', params: { id: user.id }}" class="btn btn-primary">
+                      <i class="fas fa-file-alt"></i> Declarations
+                    </router-link>
+                  </td>
+                  <!-- Delete user role (admin) -->
+                  <td v-if="loggedInRoles.includes('ROLE_ADMIN') && (user.roles.some(role => role.name === 'ROLE_INSPECTOR'))">
+                    <router-link :to="{name: 'delete-role', params: { userId: user.id, roleId: user.roles.find(role => role.name === 'ROLE_INSPECTOR')?.id}}" class="btn btn-danger">
+                      <i class="fas fa-trash"></i> Delete role {{user.roles.name}}
+                    </router-link>
+                  </td>
+                </tr>
+              </template>
+              <template v-else>
+                <!-- Single user data -->
+                <tr>
+                  <td>{{ data.id }}</td>
+                  <td>{{ data.username }}</td>
+                  <td>{{ data.email }}</td>
+                  <!-- View user details -->
+                  <td>
+                    <router-link :to="{name: 'user-details', params: { id: data.id }}" class="btn btn-primary">
+                      <i class="fas fa-info-circle"></i> Details
+                    </router-link>
+                  </td>
+                  <!-- Edit user (admin) -->
+                  <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
+                    <router-link :to="{name: 'user-edit', params: { id: data.id }}" class="btn btn-primary">
+                      <i class="fas fa-edit"></i> Edit
+                    </router-link>
+                  </td>
+                  <!-- Edit user (inspector or farmer) -->
+                  <td v-if="loggedInRoles.includes('ROLE_INSPECTOR') || loggedInRoles.includes('ROLE_FARMER')">
+                    <router-link :to="{name: 'user-edit', params: { id: data.id }}" class="btn btn-primary" v-if="data.username === loggedInUsername">
+                      <i class="fas fa-edit"></i> Edit
+                    </router-link>
+                  </td>
+                  <!-- View user declarations -->
+                  <td>
+                    <router-link :to="{name: 'user-declarations', params: { id: data.id }}" class="btn btn-primary">
+                      <i class="fas fa-file-alt"></i> Declarations
+                    </router-link>
+                  </td>
+                  <!-- Request for role (farmer) -->
+                  <td v-if="loggedInRoles.includes('ROLE_FARMER') && (loggedInRoles.length === 1)">
+                    <router-link :to="{name: 'request-for-role', params: { userId: data.id}}" class="btn btn-success" v-if="data.username === loggedInUsername">
+                      <i class="fas fa-plus"></i> Request for {{ requestedRoleName }}
+                    </router-link>
+                  </td>
+                </tr>
+              </template>
+              </tbody>
+            </table>
+          </div>
           <!-- User Requests and Create new user buttons for admin -->
           <div class="button-container mt-3">
-            <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
-              <RouterLink :to="{ name: 'user-requests'}" class="btn btn-primary ml-2">User Requests</RouterLink>
-            </td>
-            <td v-if="loggedInRoles.includes('ROLE_ADMIN')">
-              <RouterLink :to="{ name: 'register'}" class="btn btn-primary ml-2">Create new user!</RouterLink>
-            </td>
+            <router-link v-if="loggedInRoles.includes('ROLE_ADMIN')" :to="{ name: 'user-requests'}" class="btn btn-primary ml-2">
+              <i class="fas fa-user-plus"></i> User Requests
+            </router-link>
+            <router-link v-if="loggedInRoles.includes('ROLE_ADMIN')" :to="{ name: 'register'}" class="btn btn-primary ml-2">
+              <i class="fas fa-user-plus"></i> Create new user!
+            </router-link>
           </div>
-        </div></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-
 <style scoped>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-
 }
+
 .users-card {
-  width: 90vw; /* Dynamic width based on viewport width */
-  max-width: 900px;
-  padding: 20px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 80vw;
+  max-width: 800px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
   overflow-x: auto;
   table-layout: auto;
 }
 
 th, td {
-  padding: 12px;
+  padding: 15px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #edf2f7;
 }
 
 .btn {
   cursor: pointer;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.btn-primary {
+  background-color: #3490dc;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #2779bd;
 }
 
 .button-container {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
 }
 
 @media (min-width: 768px) {
   .users-card {
-    width: 50vw;
-  }
-
-  .button-container {
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-  }
-
-  .btn-primary,
-  .btn-success {
-    width: auto;
+    width: 60vw;
   }
 }
 </style>

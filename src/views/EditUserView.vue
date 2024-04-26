@@ -177,7 +177,7 @@ const goback = () => {
         </div>
         <!-- Buttons for canceling edit and submitting changes -->
         <div style="display: flex; justify-content: space-between;">
-          <button type="button" class="btn-dark" @click="goback">Cancel Edit</button>
+          <button type="button" class="btn btn-dark btn-sm" @click="goback">Cancel Edit</button>
           <button type="submit" class="btn btn-primary" :disabled="loading"> {{ loading ? 'Loading...' : 'Submit Changes' }}</button>
         </div>
 

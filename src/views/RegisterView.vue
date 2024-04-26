@@ -18,15 +18,15 @@ const errorRef = ref(null);
 const successRef = ref(null);
 
 // Function to handle form submission
-const onSubmit = async () => {
+const onSubmit = async (event) => {
   if (validateFormData()) {
     // Perform the request to create a new user
     await performRequest();
     // Display success message
     successRef.value = 'User registered successfully!';
     // Redirect the user
-    router.push('/users');
-  }
+    event.preventDefault();
+    window.location.href="http://localhost:5173/users";  }
 };
 
 
@@ -158,7 +158,7 @@ const goback = () => {
           </div>
           <!-- Submit button -->
           <button class="btn btn-primary" @click="onSubmit" type="button">Create new User</button>
-          <button type="button" class="btn-dark" @click="goback">Cancel</button>
+          <button type="button" class="btn btn-dark btn-sm" @click="goback">Cancel</button>
         </div>
       </div>
     </div>
