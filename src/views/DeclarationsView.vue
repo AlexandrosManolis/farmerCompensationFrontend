@@ -57,18 +57,20 @@ const navigateToAcceptReport = (declaration) => {
   });
 };
 
-const fireDeclarations=() =>{
-  return this.data.filter(declaration => declaration.naturalDisaster === 'Wildfire');
+
+function EnableReject(event) {
+  // Assuming event is always defined (from @keyup)
+  const rejectCause = event.target.value.trim();
+  isAmountEmpty.value = rejectCause === "";
+  sharedState.rejectCause = rejectCause;
 }
-const floodDeclarations=() =>{
-  return this.data.filter(declaration => declaration.naturalDisaster === 'Flood');
-}
-const badWeatherDeclarations=() =>{
-  return this.data.filter(declaration => declaration.naturalDisaster === 'Bad Weather');
-}
-const landslideDeclarations=() =>{
-  return this.data.filter(declaration => declaration.naturalDisaster === 'Landslide');
-}
+
+const navigateToRejectReport = (declaration) => {
+  router.push({
+    name: 'reject-report',
+    params: { userId: declaration.userId, declarationId: declaration.id }
+  });
+};
 
 
 </script>
@@ -109,7 +111,10 @@ const landslideDeclarations=() =>{
                     <td>{{ declaration.description }}</td>
                     <td>{{declaration.naturalDisaster}}</td>
                     <td>{{ declaration.submissionDate}}</td>
-                    <td><button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.status" disabled></button></td>
+                    <td>
+                      <button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.status" disabled></button>
+                      <button type="button" class="btn btn-outline-dark btn-sm button-spacing" v-if="declaration.status === 'Rejected'" v-text="declaration.rejectCause" disabled></button>
+                    </td>
 
                     <td class="d-flex align-items-center" v-if="declaration.status === 'Accepted'"><span>Total amount:</span><button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.amount" disabled></button></td>
 
@@ -125,10 +130,15 @@ const landslideDeclarations=() =>{
                     <!-- Reject button -->
                     <td v-if="((loggedInRoles.includes('ROLE_INSPECTOR') && loggedInUserId != declaration.userId)  || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted'))">
 
-                      <RouterLink :to="{name: 'reject-report', params: { userId: declaration.userId, declarationId: declaration.id}}" type="submit" class="btn btn-danger narrow-button btn-sm" role="button"><span >Reject</span></RouterLink>
+                      <label>Cause of reject: </label>
+                      <input type="text" id="description" name="description" @input="EnableReject" />
+                      <div class="spacer"></div>
+                      <button @click.prevent="()=> navigateToRejectReport(declaration)" id="rejectButton" type="submit" value="Submit" role="button" class="btn btn-danger narrow-button btn-sm button-spacing" :disabled="isAmountEmpty"><span >Reject</span></button>
                       <div class="spacer"></div>
 
+                    </td>
 
+                    <td v-if="((loggedInRoles.includes('ROLE_INSPECTOR') && loggedInUserId != declaration.userId)  || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted') && declaration.status === 'Check on site' )">
                       <!-- Amount for accepting -->
                       <label>Refund Amount:</label>
                       <input type="text" id="amount" name="amount" @input="EnableDisable" />
@@ -232,8 +242,8 @@ const landslideDeclarations=() =>{
   font-size: 16px; /* Increase font size */
 }
 
-.fa {
-  margin-right: 5px;
+.button-spacing {
+  margin-top: 10px;
 }
 
 @media (min-width: 768px) {

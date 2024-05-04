@@ -102,9 +102,13 @@ const goback = () => {
         <th>Annual Start Production</th>
         <td>{{ data.annualStartProduction }}</td>
       </tr>
-      <tr>
+      <tr v-if="data.status !== 'Rejected' ">
         <th>Status</th>
         <td>{{ data.status }}</td>
+      </tr>
+      <tr v-if="data.status === 'Rejected'">
+        <th>Status</th>
+        <td>{{data.status}} ({{ data.rejectCause }})</td>
       </tr>
       <tr v-if="data.status === 'Accepted'">
         <th>Amount</th>
