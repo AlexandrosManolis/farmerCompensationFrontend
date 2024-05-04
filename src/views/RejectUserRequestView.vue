@@ -22,7 +22,7 @@ onMounted(() => {
   // Perform the reject request
   performRequest();
   // Redirection to the users page
-  router.push('/users');
+  window.location.href='/users';
 });
 
 // Computed for the reject request URL

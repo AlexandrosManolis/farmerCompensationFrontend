@@ -18,7 +18,7 @@ onMounted(() => {
   roleIdRef.value = route.params.roleId;
   performRequest();
   // Redirect to '/users' route after performing the request
-  router.push('/users');
+  window.location.href='/users';
 });
 
 // Computed for constructing the delete API URL with userId and roleId

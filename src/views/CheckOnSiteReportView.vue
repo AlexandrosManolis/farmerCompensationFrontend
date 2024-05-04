@@ -16,7 +16,7 @@ onMounted(() => {
   userIdRef.value = route.params.userId;
   declarationIdRef.value = route.params.declarationId;
   performRequest();
-  router.push('/users/'+ userIdRef.value +'/user-declarations');
+  window.location.href='/users/'+ userIdRef.value +'/user-declarations';
 });
 
 // API URL with userId and declarationId

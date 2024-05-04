@@ -17,7 +17,7 @@ onMounted(() => {
   declarationIdRef.value = route.params.declarationId;
   performRequest();
   // Redirect to '/users' route after performing the request
-  router.push('/users/'+userIdRef.value+'/user-declarations');
+  window.location.href='/users/'+userIdRef.value+'/user-declarations';
 });
 
 // Computed for constructing the delete API URL with userId and declarationId

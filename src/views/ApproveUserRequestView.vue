@@ -16,7 +16,7 @@ onMounted(() => {
   userIdRef.value = route.params.userId;
   requestIdRef.value = route.params.requestId;
   performRequest();
-  router.push('/users/requests');
+  window.location.href='/users/requests';
 });
 
 // API URL with userId and requestId

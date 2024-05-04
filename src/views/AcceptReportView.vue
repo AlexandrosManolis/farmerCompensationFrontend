@@ -18,7 +18,7 @@ onMounted(() => {
   declarationIdRef.value = route.params.declarationId;
   performRequest();
   // Redirection
-  router.push('/users/'+ userIdRef.value +'/user-declarations');
+  window.location.href='/users/'+ userIdRef.value +'/user-declarations';
 });
 
 // API URL with userId, declarationId, and amount

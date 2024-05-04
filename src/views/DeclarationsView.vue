@@ -142,7 +142,7 @@ const navigateToRejectReport = (declaration) => {
                       <!-- Amount for accepting -->
                       <label>Refund Amount:</label>
                       <input type="text" id="amount" name="amount" @input="EnableDisable" />
-                      <button @click.prevent="()=> navigateToAcceptReport(declaration)" id="acceptButton" type="submit" value="Submit" role="button" class="btn btn-success narrow-button btn-sm" :disabled="isAmountEmpty"><span >Accept</span></button>
+                      <button @click.prevent="()=> navigateToAcceptReport(declaration)" id="acceptButton" type="submit" value="Submit" role="button" class="btn btn-success narrow-button btn-sm button-spacing" :disabled="isAmountEmpty"><span >Accept</span></button>
 
                     </td>
 

@@ -18,7 +18,7 @@ onMounted(() => {
   declarationIdRef.value = route.params.declarationId;
   performRequest();
   // Redirection to the user declarations page
-  router.push('/users/'+ userIdRef.value +'/user-declarations');
+  window.location.href='/users/'+ userIdRef.value +'/user-declarations';
 });
 
 // Computed for the reject report request URL
