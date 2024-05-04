@@ -112,8 +112,21 @@ const navigateToRejectReport = (declaration) => {
                     <td>{{declaration.naturalDisaster}}</td>
                     <td>{{ declaration.submissionDate}}</td>
                     <td>
-                      <button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.status" disabled></button>
-                      <button type="button" class="btn btn-outline-dark btn-sm button-spacing" v-if="declaration.status === 'Rejected'" v-text="declaration.rejectCause" disabled></button>
+                      <div class="btn btn-outline-dark btn-sm" >
+                        <label>Status:</label>
+                        <button type="button" v-text="declaration.status" disabled></button>
+                      </div>
+
+                      <div v-if="declaration.status === 'Rejected'" class="btn btn-outline-dark btn-sm button-spacing">
+                        <label>Reason:</label>
+                        <button type="button" v-text="declaration.rejectCause" disabled></button>
+                      </div>
+
+                      <div v-if="declaration.status === 'Check on site'" class="btn btn-outline-dark btn-sm button-spacing">
+                        <label>Appointement date:</label>
+                        <button type="button" v-text="declaration.appointementDate" disabled></button>
+                      </div>
+
                     </td>
 
                     <td class="d-flex align-items-center" v-if="declaration.status === 'Accepted'"><span>Total amount:</span><button type="button" class="btn btn-outline-dark btn-sm" v-text="declaration.amount" disabled></button></td>
