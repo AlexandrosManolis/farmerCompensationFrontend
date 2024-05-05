@@ -100,6 +100,12 @@ const router = createRouter({
       meta: {requiresAuth: true}
     },
     {
+      path: '/users/:userId/damageReport/:declarationId',
+      name: 'damage-report',
+      component: () => import('../views/DamagePercentageView.vue'),
+      meta: {requiresAuth: true}
+    },
+    {
       path: '/users/:userId/acceptReport/:declarationId',
       name: 'accept-report',
       component: () => import('../views/AcceptReportView.vue'),

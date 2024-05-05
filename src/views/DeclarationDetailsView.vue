@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useRemoteData } from '@/composables/useRemoteData.js';
 import {useApplicationStore} from "@/stores/application.js";
+import {sharedState} from "@/stores/sharedState.js";
 
 // Initializing router and route
 const router = useRouter();
@@ -19,6 +20,7 @@ declarationIdRef.value = route.params.declarationId;
 onMounted(() => {
   performRequest();
 });
+
 
 // API URL with userId and declarationId
 const urlRef = computed(() => {
@@ -44,6 +46,22 @@ const declarationId = declarationIdRef.value;
 const goback = () => {
   router.push('/users/'+ userIdRef.value+ '/user-declarations');
 };
+
+const isDamageEmpty = ref(true);
+
+function EnableDamage(event) {
+  // Assuming event is always defined (from @keyup)
+  const damagePercentage = event.target.value.trim();
+  isDamageEmpty.value = damagePercentage === "";
+  sharedState.damagePercentage = damagePercentage;
+
+}
+
+const onSubmit = () => {
+  performRequest();
+};
+
+
 </script>
 
 <template>
@@ -114,7 +132,6 @@ const goback = () => {
         <th>Amount</th>
         <td>{{ data.amount }}</td>
       </tr>
-
       </tbody>
       <div class="d-flex justify-content-between align-items-end mt-3">
 

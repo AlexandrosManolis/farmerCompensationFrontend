@@ -27,7 +27,6 @@ const urlRef = computed(() => {
 const {data, loading, performRequest} = useRemoteData(urlRef, authRef);
 
 
-
 const applicationStore = useApplicationStore();
 // Computed for loggedInUserId and loggedInRoles
 const loggedInUserId = computed(() => applicationStore.isAuthenticated ? applicationStore.userData.id : null);
@@ -40,6 +39,8 @@ const goback = () => {
 
 // Creating a ref to see if the amount input is empty
 const isAmountEmpty = ref(true);
+const isDamageEmpty = ref(true);
+const isRejectEmpty = ref(true);
 
 // Function to enable/disable the accept button based on the amount input
 function EnableDisable(event) {
@@ -61,13 +62,28 @@ const navigateToAcceptReport = (declaration) => {
 function EnableReject(event) {
   // Assuming event is always defined (from @keyup)
   const rejectCause = event.target.value.trim();
-  isAmountEmpty.value = rejectCause === "";
+  isRejectEmpty.value = rejectCause === "";
   sharedState.rejectCause = rejectCause;
+}
+
+function EnableDamage(event) {
+  // Assuming event is always defined (from @keyup)
+  const damagePercentage = event.target.value.trim();
+  isDamageEmpty.value = damagePercentage === "";
+  sharedState.damagePercentage = damagePercentage;
+
 }
 
 const navigateToRejectReport = (declaration) => {
   router.push({
     name: 'reject-report',
+    params: { userId: declaration.userId, declarationId: declaration.id }
+  });
+};
+
+const navigateToDamageReport = (declaration) => {
+  router.push({
+    name: 'damage-report',
     params: { userId: declaration.userId, declarationId: declaration.id }
   });
 };
@@ -146,14 +162,24 @@ const navigateToRejectReport = (declaration) => {
                       <label>Cause of reject: </label>
                       <input type="text" id="description" name="description" @input="EnableReject" />
                       <div class="spacer"></div>
-                      <button @click.prevent="()=> navigateToRejectReport(declaration)" id="rejectButton" type="submit" value="Submit" role="button" class="btn btn-danger narrow-button btn-sm button-spacing" :disabled="isAmountEmpty"><span >Reject</span></button>
+                      <button @click.prevent="()=> navigateToRejectReport(declaration)" id="rejectButton" type="submit" value="Submit" role="button" class="btn btn-danger narrow-button btn-sm button-spacing" :disabled="isRejectEmpty"><span >Reject</span></button>
                       <div class="spacer"></div>
 
                     </td>
 
-                    <td v-if="((loggedInRoles.includes('ROLE_INSPECTOR') && loggedInUserId != declaration.userId)  || loggedInRoles.includes('ROLE_ADMIN')) && (!(declaration.status === 'Rejected' || declaration.status === 'Accepted') && declaration.status === 'Check on site' )">
+                    <!-- Damage percentage -->
+                    <td v-if="((loggedInRoles.includes('ROLE_INSPECTOR') && loggedInUserId != declaration.userId) || loggedInRoles.includes('ROLE_ADMIN')) && (declaration.status === 'Check on site' && declaration.damagePercentage == null)">
+
+                        <label for="damage">Damage percentage:(%)</label>
+                        <input type="text" id="damage" name="damage" @input="EnableDamage" />
+                      <button @click.prevent="()=> navigateToDamageReport(declaration)" id="damageButton" type="submit" value="Submit" role="button" class="btn narrow-button btn-sm button-spacing" :disabled="isDamageEmpty"><span >Submit</span></button>
+
+
+                    </td>
+
+                    <td v-if="((loggedInRoles.includes('ROLE_INSPECTOR') && loggedInUserId != declaration.userId)  || loggedInRoles.includes('ROLE_ADMIN')) && (declaration.status === 'Check on site' && declaration.damagePercentage != null)">
                       <!-- Amount for accepting -->
-                      <label>Refund Amount:</label>
+                      <label>Refund Amount: (Estimated refund is -> {{declaration.estimatedRefund}})</label>
                       <input type="text" id="amount" name="amount" @input="EnableDisable" />
                       <button @click.prevent="()=> navigateToAcceptReport(declaration)" id="acceptButton" type="submit" value="Submit" role="button" class="btn btn-success narrow-button btn-sm button-spacing" :disabled="isAmountEmpty"><span >Accept</span></button>
 

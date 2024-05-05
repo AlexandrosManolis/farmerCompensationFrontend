@@ -13,6 +13,7 @@ const formValues = ref({
   otherDisaster:"",
   annualStartProduction: "",
   damageDate: "",
+  annualRevenues: ""
 });
 
 
@@ -60,7 +61,7 @@ const onSubmit = async () => {
   }
 
   if (isNaN(formValues.value.fieldSize)) {
-    errorRef.value = "Field Size should contain only numbers.";
+    errorRef.value = "Field Size should contain only numbers and only acre.";
     setTimeout(() => {
       errorRef.value = null;
     }, 6000);
@@ -76,6 +77,14 @@ const onSubmit = async () => {
 
   if (selectedDamageDate < selectedStartDate) {
     errorRef.value = 'Damage Date must be greater than or equal to Annual Start Production.';
+    return;
+  }
+
+  if (isNaN(formValues.value.annualRevenues)) {
+    errorRef.value = "Annual revenues should contain only numbers.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 6000);
     return;
   }
 
@@ -136,7 +145,7 @@ const goback = () => {
           <label for="plant_production">Plant Production: (current data -> {{getData.plant_production}})</label>
           <input type="text" id="plant_production" class="form-control" v-model="formValues.plant_production">
 
-          <label for="fieldSize">Field Size: (current data -> {{getData.fieldSize}})</label>
+          <label for="fieldSize">Field Size: (only acre) (current data -> {{getData.fieldSize}})</label>
           <input type="text" id="fieldSize" class="form-control" v-model.lazy="formValues.fieldSize" >
 
 
@@ -160,6 +169,10 @@ const goback = () => {
           <label for="damageDate">Damage Date: (current data -> {{getData.damageDate}})</label>
           <input type="date" id="damageDate" class="form-control" v-model="formValues.damageDate">
         </div>
+
+        <label for="annualRevenues">Field Size: (current data -> {{getData.annualRevenues}})</label>
+        <input type="text" id="annualRevenues" class="form-control" v-model.lazy="formValues.annualRevenues" >
+
 
         <!-- Error message display -->
         <div v-if="errorRef" class="text-danger mb-2">{{ errorRef }}</div>

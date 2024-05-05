@@ -12,7 +12,8 @@ const formDataRef = ref({
   "naturalDisaster": "",
   "otherDisaster":"",
   "annualStartProduction": "",
-  "damageDate": ""
+  "damageDate": "",
+  "annualRevenues": ""
 
 });
 
@@ -42,7 +43,7 @@ const onSubmit = () => {
     formDataRef.value.naturalDisaster = formDataRef.value.otherDisaster;
   }
 
-  if (!formDataRef.value.fieldAddress || !formDataRef.value.description || !formDataRef.value.plant_production || !formDataRef.value.annualStartProduction || !formDataRef.value.fieldSize || !formDataRef.value.damageDate || !formDataRef.value.naturalDisaster) {
+  if (!formDataRef.value.fieldAddress || !formDataRef.value.description || !formDataRef.value.plant_production || !formDataRef.value.annualStartProduction || !formDataRef.value.fieldSize || !formDataRef.value.damageDate || !formDataRef.value.naturalDisaster || !formDataRef.value.annualRevenues) {
     errorRef.value = "Please fill in all fields.";
     setTimeout(() => {
       errorRef.value = null;
@@ -86,6 +87,14 @@ const onSubmit = () => {
     return;
   }
 
+  if (isNaN(formDataRef.value.annualRevenues)) {
+    errorRef.value = "Annual revenues should contain only numbers.";
+    setTimeout(() => {
+      errorRef.value = null;
+    }, 6000);
+    return;
+  }
+
   performRequest();
   window.location.href = '/users/'+userIdRef.value+'/user-declarations';
 };
@@ -126,7 +135,7 @@ const goback = () => {
 
 
     <div class="mb-2">
-      <label for="fieldSize">Field Size</label>
+      <label for="fieldSize">Field Size: (only acre)</label>
       <input class="form-control" id="fieldSize" v-model="formDataRef.fieldSize" type="text"  />
     </div>
 
@@ -152,6 +161,10 @@ const goback = () => {
     <div class="mb-2">
       <label for="damageDate">Damage Date</label>
       <input class="form-control" id="damageDate" v-model="formDataRef.damageDate" type="date" />
+    </div>
+    <div class="mb-2">
+      <label for="annualRevenues">Annual Revenues</label>
+      <input class="form-control" id="annualRevenues" v-model="formDataRef.annualRevenues" type="text" />
     </div>
 
         <div v-if="errorRef" class="text-danger mb-2">{{ errorRef }}</div>
