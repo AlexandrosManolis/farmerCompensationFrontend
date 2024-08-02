@@ -4,6 +4,7 @@
 import {useRoute, useRouter} from "vue-router";
 import {computed, ref, onMounted} from "vue";
 import {useRemoteData} from "@/composables/useRemoteData.js";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 // Initializing router and route
 const router = useRouter();
@@ -21,7 +22,7 @@ onMounted(() => {
 
 // Computed for the add role request URL
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/users/role/add/'+ userIdRef.value;
+  return backendEnvVar + '/api/users/role/add/'+ userIdRef.value;
 });
 
 // Authentication

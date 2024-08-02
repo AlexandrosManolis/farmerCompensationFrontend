@@ -2,6 +2,7 @@
 import {ref, computed, onMounted} from "vue";
 import { useRemoteData } from "@/composables/useRemoteData.js";
 import {useRoute, useRouter} from "vue-router";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 const authRef = ref(true);
 const errorRef = ref(null);
@@ -23,7 +24,7 @@ userIdRef.value = route.params.id;
 
 // Computed for constructing the URL for updating user data
 const urlRef = computed(() => {
-    return 'http://localhost:9090/api/users/edit/'+ userIdRef.value;
+    return backendEnvVar + '/api/users/edit/' + userIdRef.value;
   });
 
 // Function to handle form submission

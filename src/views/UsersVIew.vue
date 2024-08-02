@@ -5,6 +5,7 @@ import {computed, onMounted, ref} from 'vue';
 import { useRemoteData } from '@/composables/useRemoteData.js';
 import {useApplicationStore} from "@/stores/application.js";
 import {useRoute} from "vue-router";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 // Initializing route
 const route = useRoute();
@@ -13,7 +14,7 @@ const route = useRoute();
 const userIdRef = ref(null);
 
 // Reference for the API URL
-const urlRef = ref('http://localhost:9090/api/users');
+const urlRef = ref(backendEnvVar + '/api/users');
 
 // Reference for authentication status
 const authRef = ref(true);

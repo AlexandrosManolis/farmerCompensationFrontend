@@ -3,6 +3,7 @@
 import {useRoute, useRouter} from "vue-router";
 import {computed, ref, onMounted} from "vue";
 import {useRemoteData} from "@/composables/useRemoteData.js";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 const router = useRouter();
 const route = useRoute();
@@ -21,7 +22,7 @@ onMounted(() => {
 
 // API URL with userId and requestId
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/admin/users/requests/accept/'+userIdRef.value+'/'+ requestIdRef.value ;
+  return backendEnvVar + '/api/admin/users/requests/accept/' + userIdRef.value + '/' + requestIdRef.value ;
 });
 
 const authRef = ref(true);

@@ -4,6 +4,7 @@ import {useRoute, useRouter} from "vue-router";
 import {computed, ref, onMounted} from "vue";
 import {useRemoteData} from "@/composables/useRemoteData.js";
 import {sharedState} from "@/stores/sharedState.js";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 const router = useRouter();
 const route = useRoute();
@@ -23,7 +24,7 @@ onMounted(() => {
 
 // API URL with userId, declarationId, and amount
 const urlRef = computed(() => {
-  return `http://localhost:9090/api/declaration/report/`+userIdRef.value+`/damageReport/`+declarationIdRef.value+`?damagePercentage=${encodeURIComponent(damagePercentage)}`;
+  return backendEnvVar + `/api/declaration/report/` + userIdRef.value + `/damageReport/` + declarationIdRef.value + `?damagePercentage=${encodeURIComponent(damagePercentage)}`;
 });
 
 

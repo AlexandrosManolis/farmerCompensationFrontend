@@ -3,6 +3,7 @@
 import {useRoute, useRouter} from "vue-router";
 import {computed, ref, onMounted} from "vue";
 import {useRemoteData} from "@/composables/useRemoteData.js";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 const router = useRouter();
 const route = useRoute();
@@ -17,12 +18,12 @@ onMounted(() => {
   declarationIdRef.value = route.params.declarationId;
   performRequest();
   // Redirect to '/users' route after performing the request
-  window.location.href='/users/'+userIdRef.value+'/user-declarations';
+  window.location.href = '/users/' + userIdRef.value + '/user-declarations';
 });
 
 // Computed for constructing the delete API URL with userId and declarationId
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/declaration/'+userIdRef.value+'/delete/'+ declarationIdRef.value ;
+  return backendEnvVar + '/api/declaration/' + userIdRef.value + '/delete/' + declarationIdRef.value ;
 });
 
 // Authentication status

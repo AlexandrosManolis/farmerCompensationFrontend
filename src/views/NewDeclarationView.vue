@@ -2,6 +2,7 @@
 import {computed, onMounted, ref} from "vue";
 import { useRemoteData } from "@/composables/useRemoteData.js";
 import {useRoute, useRouter} from "vue-router";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 // Define a reactive reference for form data
 const formDataRef = ref({
@@ -25,7 +26,7 @@ const errorRef = ref(null);
 
 // Computed for the request URL
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/declaration/'+userIdRef.value+'/new';
+  return backendEnvVar + '/api/declaration/'+userIdRef.value+'/new';
 });
 
 // Authentication

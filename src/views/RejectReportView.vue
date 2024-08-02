@@ -4,6 +4,7 @@ import {useRoute, useRouter} from "vue-router";
 import {computed, ref, onMounted} from "vue";
 import {useRemoteData} from "@/composables/useRemoteData.js";
 import {sharedState} from "@/stores/sharedState.js";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 const router = useRouter();
 const route = useRoute();
@@ -23,7 +24,7 @@ onMounted(() => {
 
 // Computed for the reject report request URL
 const urlRef = computed(() => {
-  return `http://localhost:9090/api/declaration/report/`+userIdRef.value+`/rejectReport/`+ declarationIdRef.value+ `?rejectCause=${encodeURIComponent(rejectCause)}` ;
+  return backendEnvVar + `/api/declaration/report/`+userIdRef.value+`/rejectReport/`+ declarationIdRef.value+ `?rejectCause=${encodeURIComponent(rejectCause)}` ;
 });
 
 const authRef = ref(true);

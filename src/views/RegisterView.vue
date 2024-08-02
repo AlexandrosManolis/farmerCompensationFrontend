@@ -2,6 +2,7 @@
 import {computed, ref} from 'vue';
 import { useRemoteData } from "@/composables/useRemoteData.js";
 import router from "@/router/index.js";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 // Define a reactive reference for form data
 const formDataRef = ref({
@@ -32,7 +33,7 @@ const onSubmit = async (event) => {
 
 // Computed property for the request URL
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/auth/signup';
+  return backendEnvVar + '/api/auth/signup';
 });
 
 const authRef = ref(true);

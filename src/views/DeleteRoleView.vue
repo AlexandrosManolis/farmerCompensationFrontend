@@ -3,6 +3,7 @@
 import {useRoute, useRouter} from "vue-router";
 import {computed, ref, onMounted} from "vue";
 import {useRemoteData} from "@/composables/useRemoteData.js";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 // Initializing router and route
 const router = useRouter();
@@ -23,7 +24,7 @@ onMounted(() => {
 
 // Computed for constructing the delete API URL with userId and roleId
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/admin/users/role/delete/'+userIdRef.value+'/'+ roleIdRef.value ;
+  return backendEnvVar + '/api/admin/users/role/delete/' + userIdRef.value + '/' + roleIdRef.value ;
 });
 
 const authRef = ref(true);

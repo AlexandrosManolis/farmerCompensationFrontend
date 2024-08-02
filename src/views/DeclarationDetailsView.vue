@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useRemoteData } from '@/composables/useRemoteData.js';
 import {useApplicationStore} from "@/stores/application.js";
 import {sharedState} from "@/stores/sharedState.js";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 // Initializing router and route
 const router = useRouter();
@@ -24,7 +25,7 @@ onMounted(() => {
 
 // API URL with userId and declarationId
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/declaration/'+ userIdRef.value+'/details/' + declarationIdRef.value;
+  return backendEnvVar + '/api/declaration/' + userIdRef.value + '/details/' + declarationIdRef.value;
 });
 
 const authRef = ref(true);
@@ -44,7 +45,7 @@ const declarationId = declarationIdRef.value;
 
 // Function to navigate back to the user-declarations route
 const goback = () => {
-  router.push('/users/'+ userIdRef.value+ '/user-declarations');
+  router.push('/users/' + userIdRef.value + '/user-declarations');
 };
 
 const isDamageEmpty = ref(true);

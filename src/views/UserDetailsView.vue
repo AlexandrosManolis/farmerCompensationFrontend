@@ -4,6 +4,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useRemoteData } from '@/composables/useRemoteData.js';
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 // Initializing router and route
 const router = useRouter();
@@ -17,7 +18,7 @@ const authRef = ref(true);
 
 // Computed property for the URL to fetch user details
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/users/details/' + userIdRef.value;
+  return backendEnvVar + '/api/users/details/' + userIdRef.value;
 });
 
 // useRemoteData composable to fetch user details

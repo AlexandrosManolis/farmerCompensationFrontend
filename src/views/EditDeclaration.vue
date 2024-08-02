@@ -2,6 +2,7 @@
 import {ref, computed, onMounted} from "vue";
 import { useRemoteData } from "@/composables/useRemoteData.js";
 import {useRoute, useRouter} from "vue-router";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 // Initializing form values
 const formValues = ref({
@@ -99,7 +100,7 @@ const onSubmit = async () => {
 
 // Computed for constructing the URL for updating declaration data
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/declaration/' + userIdRef.value + '/edit/' + declarationIdRef.value;
+  return backendEnvVar + '/api/declaration/' + userIdRef.value + '/edit/' + declarationIdRef.value;
 });
 const authRefPost = ref(true);
 const methodRefPost = ref("POST");
@@ -120,7 +121,7 @@ const { data: getData, performRequest: performGetRequest} = useRemoteData(urlRef
 
 // Function to handle navigation back to previous page
 const goback = () => {
-  router.push('/'+userIdRef.value+'/declaration-details/'+ declarationIdRef.value);
+  router.push('/' + userIdRef.value + '/declaration-details/' + declarationIdRef.value);
 };
 
 </script>

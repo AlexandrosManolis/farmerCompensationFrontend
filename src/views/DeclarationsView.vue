@@ -5,6 +5,7 @@ import { useRemoteData } from '@/composables/useRemoteData.js';
 import {useRoute, useRouter} from "vue-router";
 import {useApplicationStore} from "@/stores/application.js";
 import {sharedState} from "@/stores/sharedState.js";
+const backendEnvVar = import.meta.env.VITE_BACKEND;
 
 // Initializing router and route
 const router = useRouter();
@@ -22,7 +23,7 @@ onMounted(() => {
 
 // API URL with userId
 const urlRef = computed(() => {
-  return 'http://localhost:9090/api/declaration/' + userIdRef.value;
+  return backendEnvVar + '/api/declaration/' + userIdRef.value;
 });
 const {data, loading, performRequest} = useRemoteData(urlRef, authRef);
 
