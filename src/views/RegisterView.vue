@@ -27,7 +27,7 @@ const onSubmit = async (event) => {
     successRef.value = 'User registered successfully!';
     // Redirect the user
     event.preventDefault();
-    window.location.href="http://localhost:5173/users";  }
+    window.location.href='/users';  }
 };
 
 

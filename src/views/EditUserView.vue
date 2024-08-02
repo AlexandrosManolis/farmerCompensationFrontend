@@ -83,7 +83,7 @@ const onSubmit = async () => {
 
 
     await performPostRequest();
-    window.location.href="http://localhost:5173/users";  } catch (error) {
+    window.location.href='/users';  } catch (error) {
     console.error('Error submitting form', error);
   }
 };
