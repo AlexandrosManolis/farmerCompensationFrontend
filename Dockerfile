@@ -9,6 +9,10 @@ RUN npm install
 # Copy the rest of the project files to the container
 COPY . .
 
+# Get the backend URL from build args and create the .env file
+ARG VITE_BACKEND_URL
+RUN echo "VITE_BACKEND=$VITE_BACKEND_URL" > .env
+
 # Build the Vue.js application to the production mode to dist folder
 RUN npm run build
 # Use the lightweight Nginx image from the previous stage for the nginx container
