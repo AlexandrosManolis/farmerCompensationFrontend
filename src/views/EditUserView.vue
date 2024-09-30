@@ -94,7 +94,7 @@ const validateEmail = (email) => {
 };
 
 const validateAddress = (address) => {
-  return /^\S+\s+\d+$/.test(address);
+  return /^[A-Za-z\s\.\'\-]+\s+\d+[A-Za-z]?$/.test(address);
 };
 
 const validateAFM = (afm) => {
